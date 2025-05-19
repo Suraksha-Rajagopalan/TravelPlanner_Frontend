@@ -1,0 +1,13 @@
+<div class="auth-container">
+    <h2>Sign Up</h2>
+    <form (ngSubmit)="onSignup()" #signupForm="ngForm">
+      <input type="text" name="name" [(ngModel)]="name" placeholder="Name" required />
+      <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+      <p class="switch-link">
+        Already have an account? <a routerLink="/login" style="color: blue; text-decoration: underline;">Login</a>
+      </p>
+    </form>
+  </div>
+  

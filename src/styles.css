@@ -1,0 +1,29 @@
+/* Set the background for the entire app */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: url('https://cdn-icons-png.flaticon.com/512/8170/8170984.png') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+  }
+  
+  /* Optional: add a subtle overlay layer */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6); /* semi-transparent white overlay */
+    z-index: -1;
+  }
+  
+  /* Make sure app content stays on top */
+  .app-content {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+  
