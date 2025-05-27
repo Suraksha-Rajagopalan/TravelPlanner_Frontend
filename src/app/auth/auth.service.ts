@@ -18,4 +18,10 @@ export class AuthService {
   signup(name: string, email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, { name, email, password });
   }
+  
+  getUserId(): number {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user?.id || 0;
+}
+
 }

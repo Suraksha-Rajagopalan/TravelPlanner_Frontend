@@ -1,0 +1,51 @@
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <form class="row g-3 bg-light p-4 rounded shadow" style="max-width: 600px; width: 100%;" (ngSubmit)="onSubmit()">
+    <h4 class="text-center text-primary fw-bold mb-3">Add Trip</h4>
+    
+    <div class="col-md-6">
+      <label for="tripTitle" class="form-label">Trip Title</label>
+      <input type="text" class="form-control" [(ngModel)]="trip.title" name="title" required />
+    </div>
+
+    <div class="col-md-6">
+      <label for="destination" class="form-label">Destination</label>
+      <input type="text" class="form-control" [(ngModel)]="trip.destination" name="destination" required />
+    </div>
+
+    <div class="col-md-6">
+      <label for="startDate" class="form-label">Start Date</label>
+      <input type="date" class="form-control" [(ngModel)]="trip.startDate" name="startDate" required />
+    </div>
+
+    <div class="col-md-6">
+      <label for="endDate" class="form-label">End Date</label>
+      <input type="date" class="form-control" [(ngModel)]="trip.endDate" name="endDate" required />
+    </div>
+
+    <div class="col-md-6">
+      <label for="budget" class="form-label">Estimated Budget</label>
+      <input type="number" class="form-control" [(ngModel)]="trip.budget" name="budget" />
+    </div>
+
+    <div class="col-md-6">
+      <label for="travelMode" class="form-label">Travel Mode</label>
+      <select class="form-select" [(ngModel)]="trip.travelMode" name="travelMode">
+        <option selected disabled>Choose...</option>
+        <option>Car</option>
+        <option>Train</option>
+        <option>Flight</option>
+        <option>Bus</option>
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label for="notes" class="form-label">Additional Notes</label>
+      <textarea class="form-control" [(ngModel)]="trip.notes" name="notes" rows="3"></textarea>
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary w-100">Add Trip</button>
+    </div>
+  </form>
+</div>

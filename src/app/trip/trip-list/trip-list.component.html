@@ -1,0 +1,54 @@
+<div class="row m-3">
+  <div class="col-md-4 mb-3" *ngFor="let trip of trips">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ trip.title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ trip.destination }}</h6>
+        <p class="card-text">Budget: ₹{{ trip.budget }}</p>
+        <p class="card-text">Dates: {{ trip.startDate }} to {{ trip.endDate }}</p>
+        <p class="card-text">{{ trip.notes }}</p>
+
+        <button class="btn btn-outline-primary btn-sm me-2" (click)="editTrip(trip)">Edit</button>
+        <button class="btn btn-outline-success btn-sm" (click)="toggleItinerary(trip)">Itinerary</button>
+
+        <div *ngIf="trip.showItinerary" class="mt-3">
+          <div *ngFor="let item of trip.itinerary" class="mb-2">
+            <b>Day {{ item.day }}:</b> {{ item.activity }}
+          </div>
+          <input type="text" [(ngModel)]="newActivity" placeholder="Add activity..." class="form-control form-control-sm my-1" />
+          <button class="btn btn-sm btn-success" (click)="addActivity(trip)">Add Activity</button>
+        </div>
+
+        <!-- Edit form shown only for the selected trip -->
+        <div *ngIf="selectedTrip && selectedTrip.id === trip.id" class="card mt-3 p-3">
+          <h5>Edit Trip</h5>
+          <form (ngSubmit)="saveTripEdits()" class="row g-3">
+            <div class="col-12 mb-2">
+              <input class="form-control" [(ngModel)]="selectedTrip.title" name="title" required placeholder="Title" />
+            </div>
+            <div class="col-12 mb-2">
+              <input class="form-control" [(ngModel)]="selectedTrip.destination" name="destination" required placeholder="Destination" />
+            </div>
+            <div class="col-12 mb-2">
+              <input type="number" class="form-control" [(ngModel)]="selectedTrip.budget" name="budget" required placeholder="Budget" />
+            </div>
+            <div class="col-6 mb-2">
+              <input type="date" class="form-control" [(ngModel)]="selectedTrip.startDate" name="startDate" required />
+            </div>
+            <div class="col-6 mb-2">
+              <input type="date" class="form-control" [(ngModel)]="selectedTrip.endDate" name="endDate" required />
+            </div>
+            <div class="col-12 mb-2">
+              <textarea class="form-control" [(ngModel)]="selectedTrip.notes" name="notes" placeholder="Notes"></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-success me-2">Save</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
