@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f9ff;
+}
+
+.trip-card {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15);
+  overflow: hidden;
+}
+
+.trip-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.trip-content {
+  padding: 2rem;
+}
+
+.trip-title {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.trip-description {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.trip-info p {
+  font-size: 1rem;
+  margin: 0.3rem 0;
+}
+
+.section-title {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #0056b3;
+  font-size: 1.3rem;
+}
+
+ul {
+  padding-left: 1.2rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}

@@ -1,15 +1,18 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Trip } from '../models/trip';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TripService } from '../../trip/trip.service';
+import { Router } from '@angular/router';
+import { Trip } from '../../models/trip';
 
-@Injectable({
-  providedIn: 'root'
+@Component({
+  selector: 'app-sample-trips',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './sample-trips.component.html',
+  styleUrls: ['./sample-trips.component.css']
 })
-export class TripService {
-  private baseUrl = 'https://localhost:7251/api/Trip';
-
-    sampleTrips: Trip[] = [
+export class SampleTripsComponent {
+  sampleTrips: Trip[] = [
     {
       id: 101,
       title: 'Beach Getaway',
@@ -121,47 +124,31 @@ export class TripService {
       }
     }
   ];
-  private myTrips: Trip[] = [];
 
-  constructor(private http: HttpClient) {}
+  // Declare the output event for trip selection
+  @Output() tripSelected = new EventEmitter<Trip>();
 
-  // Backend API Methods
-  getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(this.baseUrl);
+  @Output() addToMyTripsEvent = new EventEmitter<Trip>();
+
+  @ViewChild('carousel', { static: false }) carousel!: ElementRef;
+
+  constructor(private tripService: TripService, private router: Router) {}
+
+  scrollLeft(): void {
+    this.carousel.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
   }
 
-  addTrip(trip: Trip) {
-  return this.http.post<Trip>(this.baseUrl, trip);
+  scrollRight(): void {
+    this.carousel.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
   }
 
-
-  updateTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.baseUrl}/${trip.id}`, trip);
+  // This emits the selected trip to the parent (dashboard)
+  onTripClick(trip: Trip): void {
+    this.tripSelected.emit(trip);
   }
 
-
-  deleteTrip(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
-  }
-
-  // Local Sample & MyTrips Methods
-  getSampleTrips(): Trip[] {
-    return this.sampleTrips;
-  }
-
-  getTripById(id: number): Trip | undefined {
-    return this.sampleTrips.find((t: Trip) => t.id === id);
-  }
-
-  getMyTrips(): Trip[] {
-    return this.myTrips;
-  }
-
-  addToMyTrips(trip: Trip): void {
-    const exists = this.myTrips.find((t: Trip) => t.id === trip.id);
-    if (!exists) {
-      this.myTrips.push(trip);
-      console.log('Trip added:', trip);
-    }
+  // use this if you want to navigate from inside this component
+  onTripSelected(trip: Trip) {
+    this.router.navigate(['/trip-details', trip.id]);
   }
 }

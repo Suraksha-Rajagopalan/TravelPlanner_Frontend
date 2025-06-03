@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,18 +10,24 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  //  Sending HTTP POST request to backend
-  login(email: string, password: string): Observable<any> {
-  return this.http.post(`${this.apiUrl}/login`, { email, password });
-}
-
-  signup(name: string, email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, { name, email, password });
+  login(email: string, password: string): Observable<{ token: string }> {
+    const body = { email, password };
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, body, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
   }
-  
+
+  signup(name: string, email: string, password: string): Observable<{ message: string }> {
+    const body = { name, email, password };
+    return this.http.post<{ message: string }>(`${this.apiUrl}/signup`, body, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
+  }
+
   getUserId(): number {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user?.id || 0;
+  return user?.id ? parseInt(user.id, 10) : 0;
 }
+
 
 }

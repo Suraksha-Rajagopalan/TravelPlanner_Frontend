@@ -19,7 +19,7 @@
 
 .custom-navbar > * {
   position: relative;
-  z-index: 2; /* Ensures content appears above background */
+  z-index: 2; 
 }
 
 .logo-bg {
@@ -29,4 +29,15 @@
   background-size: cover;
   background-position: center;
   border-radius: 8px;
+}
+
+.hover-card:hover {
+  transform: scale(1.03);
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }

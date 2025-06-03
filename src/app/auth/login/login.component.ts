@@ -17,11 +17,26 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
-  console.log('Attempting login with:', this.email, this.password);
+  localStorage.removeItem('jwtToken');
+  localStorage.removeItem('user');
+
   this.authService.login(this.email, this.password).subscribe({
-    next: (res) => {
+    next: (res: { token: string }) => {
       console.log('Login successful', res);
-      localStorage.setItem('user', JSON.stringify(res));
+      localStorage.setItem('token', res.token); 
+      localStorage.setItem('jwtToken', res.token);
+      setTimeout(() => {
+      this.router.navigate(['/dashboard']);
+    }, 0);
+
+      // Decode the token manually
+      const payload = JSON.parse(atob(res.token.split('.')[1]));
+      const user = {
+        username: payload.unique_name || payload.username,
+        email: payload.email,
+        id: parseInt(payload.nameid, 10) || parseInt(payload.id, 10) // just in case
+      };
+      localStorage.setItem('user', JSON.stringify(user));
       this.router.navigate(['/dashboard']);
     },
     error: (err) => {

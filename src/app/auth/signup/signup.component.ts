@@ -15,11 +15,35 @@ export class SignupComponent {
   email = '';
   password = '';
 
+  message: string = '';
+  isError: boolean = false;
+
   constructor(private authService: AuthService, private router: Router) {}
 
   onSignup() {
-    this.authService.signup(this.name, this.email, this.password);
-    alert('Signup successful! You can now login.');
-    this.router.navigate(['/login']);
+    const trimmedName = this.name.trim();
+    const trimmedEmail = this.email.trim();
+    const trimmedPassword = this.password;
+
+    if (!trimmedName || !trimmedEmail || !trimmedPassword) {
+      this.isError = true;
+      this.message = 'All fields are required.';
+      return;
+    }
+
+    this.authService.signup(trimmedName, trimmedEmail, trimmedPassword).subscribe({
+      next: () => {
+        this.isError = false;
+        this.message = 'Profile created successfully! You can now login.';
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (err) => {
+        console.error('Signup error:', err);
+        this.isError = true;
+        this.message = 'Signup failed: ' + (err.error?.message || 'Unknown error');
+      }
+    });
   }
 }

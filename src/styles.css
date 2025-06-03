@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    background: url('https://cdn-icons-png.flaticon.com/512/8170/8170984.png') no-repeat center center fixed;
+    background-color: aliceblue;
     background-size: cover;
     position: relative;
   }

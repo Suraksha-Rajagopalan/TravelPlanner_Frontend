@@ -1,3 +1,4 @@
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg custom-navbar px-3">
   <a class="navbar-brand d-flex align-items-center" routerLink="/dashboard">
     <div class="logo-bg me-2"></div>
@@ -9,8 +10,6 @@
     type="button"
     data-bs-toggle="collapse"
     data-bs-target="#navbarNav"
-    aria-controls="navbarNav"
-    aria-expanded="false"
     aria-label="Toggle navigation"
   >
     <span class="navbar-toggler-icon"></span>
@@ -19,33 +18,53 @@
   <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <b><a class="nav-link" routerLink="/trip-form">Create Trip</a></b>
+        <b><a class="nav-link" (click)="TripCreation()">Create Trip</a></b>
       </li>
     </ul>
 
-    <div class="d-flex">
-      <button class="btn btn-outline-success" routerLink="/login">Login</button>
+    <div class="d-flex align-items-center">
+      <ng-container *ngIf="isLoggedIn; else loginButton">
+        <button type="button" class="btn btn-outline-primary me-2" (click)="ViewProfile()">
+          My Profile ({{ username }})
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="logout()">
+          Logout
+        </button>
+      </ng-container>
+      <ng-template #loginButton>
+        <button type="button" class="btn btn-outline-success" (click)="onLoginButtonClick()">
+          Login
+        </button>
+      </ng-template>
     </div>
   </div>
 </nav>
 
+<!-- Main Content -->
 <div class="container my-4">
-  <h2 class="success-text fw-bold">My Trips</h2>
+  <h2 class="success-text fw-bold mb-3">My Trips</h2>
 
-  <div *ngIf="trips.length === 0">No trips added yet.</div>
-
-  <div *ngFor="let trip of trips" class="card my-2">
-    <div class="card-body">
-      <h5 class="card-title">{{ trip.title }}</h5>
-      <p class="card-text">Destination: {{ trip.destination }}</p>
-      <p class="card-text">Travel Dates: {{ trip.startDate }} to {{ trip.endDate }}</p>
-      <p class="card-text">Budget: ₹{{ trip.budget }}</p>
-      <p class="card-text">Mode: {{ trip.travelMode }}</p>
-      <p class="card-text">Notes: {{ trip.notes }}</p>
-      <button class="btn btn-sm btn-warning me-2" (click)="editTrip(trip)">Edit</button>
+  <div *ngIf="loading" class="text-center my-3">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
+
+  <div *ngIf="!loading && errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage && trips.length === 0" class="alert alert-info">
+    No trips added yet.
+  </div>
+
+  <!-- Trips List -->
+  <div *ngIf="!loading && !errorMessage && trips.length > 0" class="container my-5">
+    <app-trip-list [trips]="trips" (tripSelected)="myTripSelected($event)"></app-trip-list>
+  </div>
+
+  <!-- Suggested Trips Carousel -->
+  <div class="container my-5">
+    <app-sample-trips (tripSelected)="onTripSelected($event)"></app-sample-trips>
+  </div>
 </div>
-
-
-  

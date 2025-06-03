@@ -1,10 +1,12 @@
-<form (ngSubmit)="onSubmit()" #tripForm="ngForm" class="p-4 border rounded shadow-sm bg-light">
+<form (ngSubmit)="onSubmit()" #tripForm="ngForm" class="p-3 border rounded shadow-sm bg-light">
+  <h5>Edit Trip: {{ trip.title }}</h5>
+
   <div class="row g-3">
     <div class="col-md-6">
       <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
       <input
-        class="form-control"
         type="text"
+        class="form-control"
         [(ngModel)]="trip.title"
         name="title"
         required
@@ -15,8 +17,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Destination <span class="text-danger">*</span></label>
       <input
-        class="form-control"
         type="text"
+        class="form-control"
         [(ngModel)]="trip.destination"
         name="destination"
         required
@@ -27,8 +29,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
       <input
-        class="form-control"
         type="date"
+        class="form-control"
         [(ngModel)]="trip.startDate"
         name="startDate"
         required
@@ -38,8 +40,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
       <input
-        class="form-control"
         type="date"
+        class="form-control"
         [(ngModel)]="trip.endDate"
         name="endDate"
         required
@@ -49,8 +51,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Total Budget <span class="text-danger">*</span></label>
       <input
-        class="form-control"
         type="number"
+        class="form-control"
         [(ngModel)]="trip.budget"
         name="budget"
         required
@@ -62,8 +64,8 @@
     <div class="col-md-3">
       <label class="form-label fw-semibold">Food Budget</label>
       <input
-        class="form-control"
         type="number"
+        class="form-control"
         [(ngModel)]="trip.budgetDetails!.food"
         name="foodBudget"
         placeholder="Food budget"
@@ -74,8 +76,8 @@
     <div class="col-md-3">
       <label class="form-label fw-semibold">Hotel Budget</label>
       <input
-        class="form-control"
         type="number"
+        class="form-control"
         [(ngModel)]="trip.budgetDetails!.hotel"
         name="hotelBudget"
         placeholder="Hotel budget"
@@ -86,8 +88,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Travel Mode</label>
       <input
-        class="form-control"
         type="text"
+        class="form-control"
         [(ngModel)]="trip.travelMode"
         name="travelMode"
         placeholder="E.g., Flight, Car, Train"
@@ -97,8 +99,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Duration</label>
       <input
-        class="form-control"
         type="text"
+        class="form-control"
         [(ngModel)]="trip.duration"
         name="duration"
         placeholder="E.g., 3 days"
@@ -108,8 +110,8 @@
     <div class="col-md-6">
       <label class="form-label fw-semibold">Best Time to Visit</label>
       <input
-        class="form-control"
         type="text"
+        class="form-control"
         [(ngModel)]="trip.bestTime"
         name="bestTime"
         placeholder="E.g., April to June"
@@ -130,8 +132,8 @@
     <div class="col-12">
       <label class="form-label fw-semibold">Image URL</label>
       <input
-        class="form-control"
         type="url"
+        class="form-control"
         [(ngModel)]="trip.image"
         name="image"
         placeholder="Paste image URL here"
@@ -199,8 +201,7 @@
   </div>
 
   <div class="mt-4 text-end">
-    <button class="btn btn-primary px-4" type="submit" [disabled]="tripForm.invalid">
-      Create Trip
-    </button>
+    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Cancel</button>
+    <button type="submit" class="btn btn-primary">Save</button>
   </div>
 </form>

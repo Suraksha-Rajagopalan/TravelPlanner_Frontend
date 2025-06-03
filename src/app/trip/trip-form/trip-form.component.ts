@@ -1,56 +1,93 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Trip } from '../../models/trip';
+import { TripService } from '../trip.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { TripService } from '../../trip/trip.service';
-import { Trip } from '../../models/trip';
 import { AuthService } from '../../auth/auth.service';
+import { Router } from '@angular/router';
+
 
 @Component({
-  imports: [CommonModule, FormsModule],
   selector: 'app-trip-form',
   templateUrl: './trip-form.component.html',
   standalone: true,
+  imports: [FormsModule, CommonModule],
 })
 export class TripFormComponent {
   @Output() tripAdded = new EventEmitter<Trip>();
 
-  constructor(private router: Router, 
-    private tripService: TripService, 
-    private authService: AuthService) {}
+  trip: Trip = {
+    title: '',
+    destination: '',
+    startDate: '',
+    endDate: '',
+    budget: 0,
+    travelMode: '',
+    duration: '',
+    bestTime: '',
+    description: '',
+    image: '',
+    notes: '',
+    userId: 0, 
+    budgetDetails: {
+      food: 0,
+      hotel: 0,
+    },
+    essentials: [''],
+    touristSpots: [''],
+  };
 
-  trip: Trip = this.resetTrip();
+  constructor(private tripService: TripService, private authService: AuthService, private router: Router) {}
 
-  resetTrip(): Trip {
-    return {
-      //id: Date.now(),
-      title: '',
-      destination: '',
-      startDate: '',
-      endDate: '',
-      budget: 0,
-      travelMode: '',
-      notes: '',
-      itinerary: [],
-      userId: 0,
-    };
+  addEssential() {
+    this.trip.essentials.push('');
+  }
+
+  removeEssential(index: number) {
+    this.trip.essentials.splice(index, 1);
+  }
+
+  addTouristSpot() {
+    this.trip.touristSpots.push('');
+  }
+
+  removeTouristSpot(index: number) {
+    this.trip.touristSpots.splice(index, 1);
   }
 
   onSubmit() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id;
-    const newTrip = { ...this.trip, id: Date.now(), itinerary: [] };
 
-    this.tripService.addTrip(newTrip).subscribe({
-      next: (createdTrip) => {
-        this.tripAdded.emit(createdTrip); 
-        this.trip = this.resetTrip();
+    // Set the userId from AuthService before submitting
+    console.log('Token before submit:', localStorage.getItem('token'));
+    this.trip.userId = this.authService.getUserId();
+
+    this.tripService.addTrip(this.trip).subscribe({
+      next: (newTrip) => {
+        this.tripAdded.emit(newTrip);
+        this.trip = {
+          title: '',
+          destination: '',
+          startDate: '',
+          endDate: '',
+          budget: 0,
+          travelMode: '',
+          duration: '',
+          bestTime: '',
+          description: '',
+          image: '',
+          notes: '',
+          budgetDetails: {
+            food: 0,
+            hotel: 0,
+          },
+          essentials: [''],
+          touristSpots: [''],
+        };
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('Error adding trip:', err);
-        alert('Failed to add trip. Please try again.');
-      }
+        console.error('Error creating trip:', err);
+      },
     });
   }
 }
