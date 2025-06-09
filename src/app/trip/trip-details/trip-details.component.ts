@@ -25,16 +25,32 @@ export class TripDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tripId = Number(this.route.snapshot.paramMap.get('id'));
-    this.trip = this.tripService.getTripById(tripId);
-
-    if (this.trip) {
-      this.isAdded = this.tripService.getMyTrips().some(t => t.id === this.trip?.id);
-      console.log('Trip loaded:', this.trip);
-    } else {
-      this.errorMessage = 'Trip not found';
-    }
+  const tripId = Number(this.route.snapshot.paramMap.get('id'));
+  if (!tripId) {
+    this.errorMessage = 'Invalid trip ID';
+    return;
   }
+
+  // backend first
+  this.tripService.getTripByIdFromBackend(tripId).subscribe({
+    next: (trip) => {
+      this.trip = trip;
+      this.isAdded = this.tripService.getMyTrips().some(t => t.id === trip.id);
+    },
+    error: () => {
+      // Fallback to sampleTrips
+      const sampleTrip = this.tripService.getSampleTripById(tripId);
+      if (sampleTrip) {
+        this.trip = sampleTrip;
+        this.isAdded = this.tripService.getMyTrips().some(t => t.id === sampleTrip.id);
+      } else {
+        //nothing works
+        this.errorMessage = 'Trip not found';
+      }
+    }
+  });
+}
+
 
   addToMyTrips(): void {
     if (!this.trip || this.isAdded) {

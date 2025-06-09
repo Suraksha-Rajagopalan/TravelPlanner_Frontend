@@ -5,6 +5,13 @@ export interface BudgetDetails {
   hotel: number;
 }
 
+export interface Review {
+  tripId: number;
+  userId: number;
+  rating: number;
+  reviewText: string; 
+}
+
 export interface Trip {
   id?: number;
   title: string;
@@ -28,4 +35,6 @@ export interface Trip {
   // Frontend-only UI helpers (not sent to backend)
   showItinerary?: boolean;
   itinerary?: any[]; // Replace with actual Itinerary type if defined
+  rating?: number;
+  review?:string;
 }

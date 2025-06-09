@@ -29,5 +29,4 @@ export class AuthService {
   return user?.id ? parseInt(user.id, 10) : 0;
 }
 
-
 }

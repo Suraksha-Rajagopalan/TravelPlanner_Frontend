@@ -1,0 +1,29 @@
+<div class="p-4">
+  <h2>Share Trip via Gmail</h2>
+
+  <button (click)="openGmailLogin()">Login with Gmail</button>
+
+  <div *ngIf="accessToken">
+    <p><strong>Logged in as:</strong> {{ fromEmail }}</p>
+
+    <label>
+      To Email:
+      <input [(ngModel)]="toEmail" type="email" />
+    </label>
+    <br />
+
+    <label>
+      Subject:
+      <input [(ngModel)]="subject" />
+    </label>
+    <br />
+
+    <label>
+      Body:
+      <textarea [(ngModel)]="body" rows="4"></textarea>
+    </label>
+    <br />
+
+    <button (click)="sendEmail()">Send Email</button>
+  </div>
+</div>

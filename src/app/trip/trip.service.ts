@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Trip } from '../models/trip';
+import { Review } from '../models/trip';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -130,6 +134,10 @@ export class TripService {
     return this.http.get<Trip[]>(this.baseUrl);
   }
 
+  getTripByIdFromBackend(id: number): Observable<Trip> {
+    return this.http.get<Trip>(`${this.baseUrl}/${id}`);
+  }
+
   addTrip(trip: Trip) {
   return this.http.post<Trip>(this.baseUrl, trip);
   }
@@ -149,7 +157,7 @@ export class TripService {
     return this.sampleTrips;
   }
 
-  getTripById(id: number): Trip | undefined {
+  getSampleTripById(id: number): Trip | undefined {
     return this.sampleTrips.find((t: Trip) => t.id === id);
   }
 
@@ -163,5 +171,21 @@ export class TripService {
       this.myTrips.push(trip);
       console.log('Trip added:', trip);
     }
+  }
+
+  // Functions for Reviews-
+
+  getReview(tripId: number): Observable<Review | null> {
+    return this.http.get<Review[]>(`${this.baseUrl}/${tripId}/reviews`).pipe(
+      map(reviews => reviews.length > 0 ? reviews[0] : null),
+      catchError(() => of(null))
+  );
+}
+
+
+
+  // Ratings-
+  submitRatingAndReview(tripId: number, rating: number, review: string) {
+    return this.http.post(`${this.baseUrl}/${tripId}/review`, { rating, review });
   }
 }

@@ -1,207 +1,134 @@
-<form (ngSubmit)="onSubmit()" #tripForm="ngForm" class="p-3 border rounded shadow-sm bg-light">
-  <h5>Edit Trip: {{ trip.title }}</h5>
-
-  <div class="row g-3">
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="trip.title"
-        name="title"
-        required
-        placeholder="Enter trip title"
-      />
+<div class="container mt-4">
+  <h2>Edit Trip</h2>
+  <form [formGroup]="tripForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label>Title</label>
+      <input class="form-control" formControlName="title" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Destination <span class="text-danger">*</span></label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="trip.destination"
-        name="destination"
-        required
-        placeholder="Enter destination"
-      />
+    <div class="mb-3">
+      <label>Destination</label>
+      <input class="form-control" formControlName="destination" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
-      <input
-        type="date"
-        class="form-control"
-        [(ngModel)]="trip.startDate"
-        name="startDate"
-        required
-      />
+    <div class="mb-3">
+      <label>Start Date</label>
+      <input class="form-control" type="date" formControlName="startDate" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
-      <input
-        type="date"
-        class="form-control"
-        [(ngModel)]="trip.endDate"
-        name="endDate"
-        required
-      />
+    <div class="mb-3">
+      <label>End Date</label>
+      <input class="form-control" type="date" formControlName="endDate" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Total Budget <span class="text-danger">*</span></label>
-      <input
-        type="number"
-        class="form-control"
-        [(ngModel)]="trip.budget"
-        name="budget"
-        required
-        placeholder="Enter total budget"
-        min="0"
-      />
+    <div class="mb-3">
+      <label>Budget</label>
+      <input type="number" class="form-control" formControlName="budget" />
     </div>
 
-    <div class="col-md-3">
-      <label class="form-label fw-semibold">Food Budget</label>
-      <input
-        type="number"
-        class="form-control"
-        [(ngModel)]="trip.budgetDetails!.food"
-        name="foodBudget"
-        placeholder="Food budget"
-        min="0"
-      />
+    <div class="mb-3">
+      <label>Travel Mode</label>
+      <input class="form-control" formControlName="travelMode" />
     </div>
 
-    <div class="col-md-3">
-      <label class="form-label fw-semibold">Hotel Budget</label>
-      <input
-        type="number"
-        class="form-control"
-        [(ngModel)]="trip.budgetDetails!.hotel"
-        name="hotelBudget"
-        placeholder="Hotel budget"
-        min="0"
-      />
+    <div class="mb-3">
+      <label>Notes</label>
+      <textarea class="form-control" formControlName="notes"></textarea>
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Travel Mode</label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="trip.travelMode"
-        name="travelMode"
-        placeholder="E.g., Flight, Car, Train"
-      />
+    <div class="mb-3">
+      <label>Duration (days)</label>
+      <input type="number" class="form-control" formControlName="duration" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Duration</label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="trip.duration"
-        name="duration"
-        placeholder="E.g., 3 days"
-      />
+    <div class="mb-3">
+      <label>Best Time to Visit</label>
+      <input class="form-control" formControlName="bestTime" />
     </div>
 
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">Best Time to Visit</label>
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="trip.bestTime"
-        name="bestTime"
-        placeholder="E.g., April to June"
-      />
+    <div class="mb-3">
+      <label>Image URL</label>
+      <input class="form-control" formControlName="image" />
     </div>
 
-    <div class="col-12">
-      <label class="form-label fw-semibold">Description</label>
-      <textarea
-        class="form-control"
-        [(ngModel)]="trip.description"
-        name="description"
-        rows="3"
-        placeholder="Write a short description"
-      ></textarea>
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea class="form-control" formControlName="description"></textarea>
     </div>
 
-    <div class="col-12">
-      <label class="form-label fw-semibold">Image URL</label>
-      <input
-        type="url"
-        class="form-control"
-        [(ngModel)]="trip.image"
-        name="image"
-        placeholder="Paste image URL here"
-      />
-    </div>
-
-    <!-- Essentials -->
-    <div class="col-12">
-      <label class="form-label fw-semibold">Essentials</label>
-      <div *ngFor="let essential of trip.essentials; let i = index" class="input-group mb-2">
+    <div class="mb-3">
+      <label>Essentials</label>
+      <div
+        *ngFor="let item of tripForm.get('essentials')?.value; let i = index"
+        class="d-flex mb-2"
+      >
         <input
-          class="form-control"
-          [(ngModel)]="trip.essentials![i]"
-          [name]="'essential' + i"
-          placeholder="Essential item"
+          type="text"
+          class="form-control me-2"
+          [value]="item"
+          (input)="onEssentialChange($event, i)"
         />
         <button
-          class="btn btn-outline-danger"
+          class="btn btn-danger"
           type="button"
           (click)="removeEssential(i)"
-          title="Remove essential"
         >
-          &times;
+          Remove
         </button>
       </div>
-      <button class="btn btn-outline-primary btn-sm" type="button" (click)="addEssential()">
-        + Add Essential
+      <button
+        type="button"
+        class="btn btn-outline-primary btn-sm"
+        (click)="addEssential()"
+      >
+        Add Essential
       </button>
     </div>
 
-    <!-- Tourist Spots -->
-    <div class="col-12 mt-4">
-      <label class="form-label fw-semibold">Tourist Spots</label>
-      <div *ngFor="let spot of trip.touristSpots; let j = index" class="input-group mb-2">
+    <div class="mb-3">
+      <label>Tourist Spots</label>
+      <div
+        *ngFor="let spot of tripForm.get('touristSpots')?.value; let i = index"
+        class="d-flex mb-2"
+      >
         <input
-          class="form-control"
-          [(ngModel)]="trip.touristSpots![j]"
-          [name]="'spot' + j"
-          placeholder="Tourist spot"
+          type="text"
+          class="form-control me-2"
+          [value]="spot"
+          (input)="onTouristSpotChange($event, i)"
         />
         <button
-          class="btn btn-outline-danger"
+          class="btn btn-danger"
           type="button"
-          (click)="removeTouristSpot(j)"
-          title="Remove tourist spot"
+          (click)="removeTouristSpot(i)"
         >
-          &times;
+          Remove
         </button>
       </div>
-      <button class="btn btn-outline-primary btn-sm" type="button" (click)="addTouristSpot()">
-        + Add Tourist Spot
+      <button
+        type="button"
+        class="btn btn-outline-primary btn-sm"
+        (click)="addTouristSpot()"
+      >
+        Add Tourist Spot
       </button>
     </div>
 
-    <div class="col-12 mt-4">
-      <label class="form-label fw-semibold">Notes</label>
-      <textarea
-        class="form-control"
-        [(ngModel)]="trip.notes"
-        name="notes"
-        rows="3"
-        placeholder="Additional notes"
-      ></textarea>
-    </div>
-  </div>
+    <div formGroupName="budgetDetails">
+      <div class="mb-3">
+        <label>Food Budget</label>
+        <input type="number" class="form-control" formControlName="food" />
+      </div>
 
-  <div class="mt-4 text-end">
-    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Cancel</button>
-    <button type="submit" class="btn btn-primary">Save</button>
-  </div>
-</form>
+      <div class="mb-3">
+        <label>Hotel Budget</label>
+        <input type="number" class="form-control" formControlName="hotel" />
+      </div>
+    </div>
+
+    <button class="btn btn-success me-2" type="submit">Save</button>
+    <button class="btn btn-secondary" type="button" (click)="onCancel()">
+      Cancel
+    </button>
+  </form>
+</div>
