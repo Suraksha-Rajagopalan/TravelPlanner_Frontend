@@ -90,22 +90,20 @@
   </div>
 
   <!-- Add to My Trips Button -->
-  <div class="row mb-4">
-    <div class="row mb-4" *ngIf="!isAdded">
-      <div class="col-12 text-end">
-        <button class="btn btn-outline-primary" (click)="addToMyTrips()">
-          <i class="bi bi-bookmark-plus"></i>
-          Add to My Trips
-        </button>
-      </div>
+  <div class="row mb-4" *ngIf="!isAdded && !readOnly">
+    <div class="col-12 text-end">
+      <button class="btn btn-outline-primary" (click)="addToMyTrips()">
+        <i class="bi bi-bookmark-plus"></i>
+        Add to My Trips
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Optional: Show message if no trip is selected -->
-  <div
-    *ngIf="!trip && !errorMessage"
-    class="container py-4 text-center text-muted fst-italic"
-  >
-    Please select a trip to see details.
-  </div>
+<!-- Optional: Show message if no trip is selected -->
+<div
+  *ngIf="!trip && !errorMessage"
+  class="container py-4 text-center text-muted fst-italic"
+>
+  Please select a trip to see details.
 </div>

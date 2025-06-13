@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './share.component.html',
 })
 export class ShareComponent {
+  accessType: string = 'view';
   toEmail = '';
   subject = '';
   body = '';

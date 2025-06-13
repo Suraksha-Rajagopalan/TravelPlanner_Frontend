@@ -16,6 +16,7 @@ export class TripDetailComponent implements OnInit {
   trip?: Trip;
   isAdded: boolean = false;
   errorMessage?: string;
+  readOnly: boolean = false; 
 
   constructor(
     private route: ActivatedRoute,
@@ -24,32 +25,37 @@ export class TripDetailComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-  const tripId = Number(this.route.snapshot.paramMap.get('id'));
+ngOnInit(): void {
+  const tripIdParam = this.route.snapshot.paramMap.get('id'); // your param is 'id'
+  const accessType = this.route.snapshot.queryParamMap.get('access');
+
+  if (accessType === 'view') {
+    this.readOnly = true;
+  }
+
+  const tripId = Number(tripIdParam);
   if (!tripId) {
     this.errorMessage = 'Invalid trip ID';
     return;
   }
 
-  // backend first
   this.tripService.getTripByIdFromBackend(tripId).subscribe({
     next: (trip) => {
       this.trip = trip;
       this.isAdded = this.tripService.getMyTrips().some(t => t.id === trip.id);
     },
     error: () => {
-      // Fallback to sampleTrips
       const sampleTrip = this.tripService.getSampleTripById(tripId);
       if (sampleTrip) {
         this.trip = sampleTrip;
         this.isAdded = this.tripService.getMyTrips().some(t => t.id === sampleTrip.id);
       } else {
-        //nothing works
         this.errorMessage = 'Trip not found';
       }
     }
   });
 }
+
 
 
   addToMyTrips(): void {

@@ -14,39 +14,47 @@
         <h6 class="card-subtitle mb-2 text-muted">{{ trip.destination }}</h6>
         <p class="card-text">Budget: ₹{{ trip.budget }}</p>
         <p class="card-text">
-          Dates: {{ trip.startDate | date:'mediumDate' }} to {{ trip.endDate | date:'mediumDate' }}
+          Dates: {{ trip.startDate | date : "mediumDate" }} to
+          {{ trip.endDate | date : "mediumDate" }}
         </p>
         <p class="card-text">{{ trip.notes }}</p>
 
         <button
-          class="btn btn-outline-warning btn-sm me-2"
+          class="btn btn-outline-warning btn-sm me-2 mt-3"
           (click)="selectTrip('view', trip)"
         >
           View
         </button>
         <button
-          class="btn btn-outline-primary btn-sm me-2"
+          class="btn btn-outline-primary btn-sm me-2 mt-3"
           (click)="selectTrip('edit', trip)"
         >
           Edit
         </button>
         <button
-          class="btn btn-outline-success btn-sm me-2"
-          (click)="toggleItinerary(trip)"
+          class="btn btn-outline-success btn-sm me-2 mt-3"
+          [routerLink]="['/trip', trip.id, 'itinerary']"
         >
           Itinerary
         </button>
+
         <button
-          class="btn btn-outline-danger btn-sm"
+          class="btn btn-outline-dark btn-sm mt-3"
+          [routerLink]="['/trip', trip.id, 'checklist']"
+        >
+          Checklist
+        </button>
+
+        <button
+          class="btn btn-outline-danger btn-sm me-2 mt-3"
           (click)="deleteTrip(trip)"
         >
           Delete
         </button>
 
-        <!-- Show Rate button ONLY if no rating or rating = 0 -->
         <button
           *ngIf="!trip.rating || trip.rating === 0"
-          class="btn btn-outline-info btn-sm mt-2"
+          class="btn btn-outline-info btn-sm me-2 mt-3"
           (click)="openRatingModal(trip)"
         >
           Rate

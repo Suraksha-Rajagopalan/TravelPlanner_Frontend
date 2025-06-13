@@ -1,4 +1,4 @@
-import { Itinerary } from "./itinerary";
+import { ItineraryItem } from "./itinerary";
 
 export interface BudgetDetails {
   food: number;

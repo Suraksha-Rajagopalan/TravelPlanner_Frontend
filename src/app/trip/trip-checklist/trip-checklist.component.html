@@ -1,0 +1,34 @@
+<!-- src/app/trip/trip-checklist/trip-checklist.component.html -->
+<div class="container mt-4">
+  <h4>Trip Checklist</h4>
+  <div class="mb-3 d-flex">
+    <input
+      [(ngModel)]="newItemText"
+      class="form-control me-2"
+      placeholder="Add checklist item..."
+    />
+    <button class="btn btn-primary" (click)="addItem()">Add</button>
+  </div>
+
+  <ul class="list-group">
+    <li
+      *ngFor="let item of checklist"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <div>
+        <input
+          type="checkbox"
+          class="form-check-input me-2"
+          [checked]="item.isCompleted"
+          (change)="toggleComplete(item)"
+        />
+        <span [ngClass]="{ 'text-decoration-line-through': item.isCompleted }">
+          {{ item.text }}
+        </span>
+      </div>
+      <button class="btn btn-sm btn-danger" (click)="deleteItem(item)">
+        Delete
+      </button>
+    </li>
+  </ul>
+</div>

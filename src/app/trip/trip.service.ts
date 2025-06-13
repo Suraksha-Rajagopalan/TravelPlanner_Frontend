@@ -5,6 +5,8 @@ import { Trip } from '../models/trip';
 import { Review } from '../models/trip';
 import { map, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ItineraryItemCreate, ItineraryItem } from '../models/itinerary';
+import { ChecklistItem } from '../models/checklist';
 
 
 @Injectable({
@@ -188,4 +190,53 @@ export class TripService {
   submitRatingAndReview(tripId: number, rating: number, review: string) {
     return this.http.post(`${this.baseUrl}/${tripId}/review`, { rating, review });
   }
+
+
+  // For all reviwes and Ratings
+  searchTripReviews(destination: string): Observable<any[]> {
+    return this.http.get<any[]>(`https://localhost:7251/api/TripReviews/search`, {
+      params: { destination }
+    });
+  }
+
+  //Itinerarys-
+getItinerary(tripId: number): Observable<ItineraryItem[]> {
+  return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/trips/${tripId}/itinerary`);
+}
+
+addItineraryItem(tripId: number, item: ItineraryItemCreate): Observable<ItineraryItem> {
+  console.log('Sending:', item);  // what is sent to the backend
+  return this.http.post<ItineraryItem>(
+    `https://localhost:7251/api/trips/${tripId}/itinerary`,
+    item
+  );
+}
+
+
+updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
+  return this.http.put<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${item.id}`, item);
+}
+
+deleteItineraryItem(tripId: number, id: number): Observable<void> {
+  return this.http.delete<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${id}`);
+}
+
+// src/app/trip/trip.service.ts
+getChecklist(tripId: number) {
+  return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/trips/${tripId}/checklist`);
+}
+
+addChecklistItem(item: ChecklistItem) {
+  return this.http.post<ChecklistItem>(`https://localhost:7251/api/trips/${item.tripId}/checklist`, item);
+}
+
+updateChecklistItem(item: ChecklistItem) {
+  return this.http.put(`https://localhost:7251/api/trips/${item.tripId}/checklist/${item.id}`, item);
+}
+
+deleteChecklistItem(id: number) {
+  return this.http.delete(`https://localhost:7251/api/checklist/${id}`);
+}
+
+
 }

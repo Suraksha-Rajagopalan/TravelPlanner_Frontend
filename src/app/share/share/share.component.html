@@ -13,6 +13,15 @@
     <br />
 
     <label>
+      Access:
+      <select [(ngModel)]="accessType">
+        <option value="view">View</option>
+        <option value="edit">Edit</option>
+      </select>
+    </label>
+    <br />
+
+    <label>
       Subject:
       <input [(ngModel)]="subject" />
     </label>

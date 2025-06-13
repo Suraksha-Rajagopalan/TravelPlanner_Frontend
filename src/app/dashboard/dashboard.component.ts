@@ -95,4 +95,9 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/trip-details', trip.id]); 
   }
 
+  // To go to all Reviews
+  goToTripReviews() {
+    this.router.navigate(['/trip-reviews']);
+  }
+
 }

@@ -19,6 +19,9 @@ import { TripEditComponent } from './app/trip/trip-edit/trip-edit.component';
 import { authGuard } from './app/auth/auth.guard';
 import { ShareComponent } from './app/share/share/share.component';
 import { RateTripComponent } from './app/rating/rate-trip/rate-trip.component';
+import { TripReviewsComponent } from './app/trip/trip-reviews/trip-reviews.component';
+import { TripItineraryComponent } from './app/trip/trip-itinerary/trip-itinerary.component';
+import { TripChecklistComponent } from './app/trip/trip-checklist/trip-checklist.component';
 
 const routes: Routes = [
   { path: 'trip-form', component: TripFormComponent },
@@ -33,6 +36,11 @@ const routes: Routes = [
   { path: 'trip-edit/:id', component: TripEditComponent },
   { path: 'share', component: ShareComponent },
   { path: 'rate-trip', component: RateTripComponent },
+  { path: 'trip-reviews', component: TripReviewsComponent },
+  { path: 'trip/:id/itinerary', component: TripItineraryComponent },
+  { path: 'trip/:id/checklist', component: TripChecklistComponent },
+  { path: 'oauth-callback',
+  loadComponent: () => import('./app/share/oauth-callback/oauth-callback.component').then(m => m.OauthCallbackComponent)},
   { path: 'trip-form', component: TripFormComponent, canActivate: [authGuard] },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
 ];

@@ -20,11 +20,18 @@
       <li class="nav-item">
         <b><a class="nav-link" (click)="TripCreation()">Create Trip</a></b>
       </li>
+      <li class="nav-item">
+        <b><a class="nav-link" (click)="goToTripReviews()">Trip Reviews</a></b>
+      </li>
     </ul>
 
     <div class="d-flex align-items-center">
       <ng-container *ngIf="isLoggedIn; else loginButton">
-        <button type="button" class="btn btn-outline-primary me-2" (click)="ViewProfile()">
+        <button
+          type="button"
+          class="btn btn-outline-primary me-2"
+          (click)="ViewProfile()"
+        >
           My Profile ({{ username }})
         </button>
         <button type="button" class="btn btn-outline-danger" (click)="logout()">
@@ -32,7 +39,11 @@
         </button>
       </ng-container>
       <ng-template #loginButton>
-        <button type="button" class="btn btn-outline-success" (click)="onLoginButtonClick()">
+        <button
+          type="button"
+          class="btn btn-outline-success"
+          (click)="onLoginButtonClick()"
+        >
           Login
         </button>
       </ng-template>
@@ -54,17 +65,28 @@
     {{ errorMessage }}
   </div>
 
-  <div *ngIf="!loading && !errorMessage && trips.length === 0" class="alert alert-info">
+  <div
+    *ngIf="!loading && !errorMessage && trips.length === 0"
+    class="alert alert-info"
+  >
     No trips added yet.
   </div>
 
   <!-- Trips List -->
-  <div *ngIf="!loading && !errorMessage && trips.length > 0" class="container my-5">
-    <app-trip-list [trips]="trips" (tripSelected)="myTripSelected($event)"></app-trip-list>
+  <div
+    *ngIf="!loading && !errorMessage && trips.length > 0"
+    class="container my-5"
+  >
+    <app-trip-list
+      [trips]="trips"
+      (tripSelected)="myTripSelected($event)"
+    ></app-trip-list>
   </div>
 
   <!-- Suggested Trips Carousel -->
   <div class="container my-5">
-    <app-sample-trips (tripSelected)="onTripSelected($event)"></app-sample-trips>
+    <app-sample-trips
+      (tripSelected)="onTripSelected($event)"
+    ></app-sample-trips>
   </div>
 </div>

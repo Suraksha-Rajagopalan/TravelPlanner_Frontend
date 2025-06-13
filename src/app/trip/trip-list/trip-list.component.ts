@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
 
 import { Trip } from '../../models/trip';
 import { Review } from '../../models/trip';
@@ -13,7 +14,7 @@ import { AuthService } from '../../auth/auth.service';
 @Component({
   selector: 'app-trip-list',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterModule],
   templateUrl: './trip-list.component.html',
   styleUrls: ['./trip-list.component.css']
 })
