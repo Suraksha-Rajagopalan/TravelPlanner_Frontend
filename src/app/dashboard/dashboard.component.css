@@ -3,7 +3,11 @@
   background-position: center;
   background-repeat: no-repeat;
   background-color: #66dcf4;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;         
+  z-index: 1050; 
 }
 
 .custom-navbar::before {

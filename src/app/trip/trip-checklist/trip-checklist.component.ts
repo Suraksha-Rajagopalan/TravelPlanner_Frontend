@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../trip.service';
+import { AuthService } from '../../auth/auth.service';
 import { ChecklistItem } from '../../models/checklist';
 
 @Component({
@@ -14,12 +15,16 @@ import { ChecklistItem } from '../../models/checklist';
 export class TripChecklistComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private tripService = inject(TripService);
+  private authService = inject(AuthService);
+
   tripId!: number;
+  userId!: number;
   checklist: ChecklistItem[] = [];
   newItemText: string = '';
 
   ngOnInit() {
     this.tripId = +this.route.snapshot.paramMap.get('id')!;
+    this.userId = this.authService.getUserId(); 
     this.loadChecklist();
   }
 
@@ -34,8 +39,9 @@ export class TripChecklistComponent implements OnInit {
 
     const newItem: ChecklistItem = {
       tripId: this.tripId,
-      text: this.newItemText,
-      isCompleted: false,
+      userId: this.userId,
+      description: this.newItemText,
+      completed: false,
     };
 
     this.tripService.addChecklistItem(newItem).subscribe(added => {
@@ -45,13 +51,13 @@ export class TripChecklistComponent implements OnInit {
   }
 
   toggleComplete(item: ChecklistItem) {
-    item.isCompleted = !item.isCompleted;
+    item.completed = !item.completed;
     this.tripService.updateChecklistItem(item).subscribe();
   }
 
   deleteItem(item: ChecklistItem) {
-    this.tripService.deleteChecklistItem(item.id!).subscribe(() => {
-      this.checklist = this.checklist.filter(i => i.id !== item.id);
-    });
-  }
+  this.tripService.deleteChecklistItem(this.tripId, item.id!).subscribe(() => {
+    this.checklist = this.checklist.filter(i => i.id !== item.id);
+  });
+}
 }

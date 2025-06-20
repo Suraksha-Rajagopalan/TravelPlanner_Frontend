@@ -18,6 +18,10 @@ export class SignupComponent {
   message: string = '';
   isError: boolean = false;
 
+  passwordHasMinLength: boolean = false;
+  passwordHasNumber: boolean = false;
+  passwordHasUppercase: boolean = false;
+
   constructor(private authService: AuthService, private router: Router) {}
 
   onSignup() {
@@ -46,4 +50,10 @@ export class SignupComponent {
       }
     });
   }
+
+  checkPasswordStrength() {
+    this.passwordHasMinLength = this.password.length >= 6;
+    this.passwordHasNumber = /\d/.test(this.password);
+    this.passwordHasUppercase = /[A-Z]/.test(this.password);
+ }
 }

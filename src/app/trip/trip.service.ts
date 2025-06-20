@@ -234,9 +234,45 @@ updateChecklistItem(item: ChecklistItem) {
   return this.http.put(`https://localhost:7251/api/trips/${item.tripId}/checklist/${item.id}`, item);
 }
 
-deleteChecklistItem(id: number) {
-  return this.http.delete(`https://localhost:7251/api/checklist/${id}`);
+deleteChecklistItem(tripId: number, id: number) {
+  return this.http.delete(`https://localhost:7251/api/trips/${tripId}/checklist/${id}`);
 }
+
+
+// Budget Tracking
+
+// src/app/trip/trip.service.ts
+
+getExpenses(tripId: number) {
+  return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/expenses`);
+}
+
+addExpense(tripId: number, expense: any) {
+  return this.http.post(`https://localhost:7251/api/trips/${tripId}/expenses`, expense);
+}
+
+deleteExpense(tripId: number, id: number) {
+  return this.http.delete(`https://localhost:7251/api/trips/${tripId}/expenses/${id}`);
+}
+
+updateExpense(tripId: number, expenseId: number, expense: any): Observable<any> {
+  return this.http.put(`https://localhost:7251/api/trips/${tripId}/expenses/${expenseId}`, expense);
+}
+
+
+// Shared trips
+
+shareTrip(data: {
+    tripId: number;
+    sharedWithEmail: string;
+    accessLevel: 'view' | 'edit';
+  }) {
+    return this.http.post(`https://localhost:7251/api/TripShare/share`, data);
+  }
+
+  getSharedTrips() {
+    return this.http.get<Trip[]>(`https://localhost:7251/api/TripShare/shared-with-me`);
+  }
 
 
 }

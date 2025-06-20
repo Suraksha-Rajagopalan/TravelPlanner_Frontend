@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 
 import { Trip } from '../../models/trip';
+import { TripWithOwnership } from '../../models/trip-with-ownership.model';
 import { Review } from '../../models/trip';
 import { TripService } from '../trip.service';
 import { RateTripComponent } from '../../rating/rate-trip/rate-trip.component';
@@ -22,6 +30,8 @@ export class TripListComponent implements OnChanges {
   @Input() trips: Trip[] = [];
   @Output() tripSelected = new EventEmitter<{ action: 'view' | 'edit', trip: Trip }>();
 
+  displayedTrips: TripWithOwnership[] = [];
+
   newActivity: string = '';
   selectedTrip: Trip | null = null;
   private userId: number = 0;
@@ -37,49 +47,53 @@ export class TripListComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['trips'] && this.trips && this.trips.length > 0) {
+      this.displayedTrips = this.trips.map(trip => ({
+        ...trip,
+        isOwner: trip.userId === this.userId
+      }));
       this.loadReviewsForTrips();
     }
   }
 
   private loadReviewsForTrips() {
-  this.trips.forEach(trip => {
-    if (trip.id !== undefined && trip.id !== null) {
-      this.tripService.getReview(trip.id).subscribe({
-        next: (review: Review | null) => {
-          if (review && review.userId === this.userId) {
-            trip.rating = review.rating;
-            trip.review = review.reviewText; 
-          } else {
+    this.displayedTrips.forEach(trip => {
+      if (trip.id != null) {
+        this.tripService.getReview(trip.id).subscribe({
+          next: (review: Review | null) => {
+            if (review && review.userId === this.userId) {
+              trip.rating = review.rating;
+              trip.review = review.reviewText;
+            } else {
+              trip.rating = 0;
+              trip.review = '';
+            }
+          },
+          error: () => {
             trip.rating = 0;
             trip.review = '';
           }
-        },
-        error: () => {
-          trip.rating = 0;
-          trip.review = '';
-        }
-      });
-    } else {
-      trip.rating = 0;
-      trip.review = '';
-    }
-  });
-}
+        });
+      } else {
+        trip.rating = 0;
+        trip.review = '';
+      }
+    });
+  }
 
-  selectTrip(action: 'view' | 'edit', trip: Trip): void {
+  selectTrip(action: 'view' | 'edit', trip: TripWithOwnership): void {
     this.tripSelected.emit({ action, trip });
   }
 
-  shareTrip(trip: Trip) {
-    this.router.navigate(['/share'], { state: { trip } });
+  shareTrip(trip: TripWithOwnership) {
+    this.router.navigate(['/trip-share', trip.id], { state: { trip } });
   }
 
-  saveTripEdits(updatedTrip: Trip) {
+  saveTripEdits(updatedTrip: TripWithOwnership) {
     this.tripService.updateTrip(updatedTrip).subscribe({
       next: () => {
-        const index = this.trips.findIndex(t => t.id === updatedTrip.id);
+        const index = this.displayedTrips.findIndex(t => t.id === updatedTrip.id);
         if (index > -1) {
-          this.trips[index] = { ...updatedTrip };
+          this.displayedTrips[index] = { ...updatedTrip };
         }
         this.selectedTrip = null;
       },
@@ -91,11 +105,11 @@ export class TripListComponent implements OnChanges {
     this.selectedTrip = null;
   }
 
-  toggleItinerary(trip: Trip) {
+  toggleItinerary(trip: TripWithOwnership) {
     trip.showItinerary = !trip.showItinerary;
   }
 
-  addActivity(trip: Trip) {
+  addActivity(trip: TripWithOwnership) {
     if (this.newActivity.trim()) {
       if (!trip.itinerary) {
         trip.itinerary = [];
@@ -106,11 +120,11 @@ export class TripListComponent implements OnChanges {
     }
   }
 
-  deleteTrip(trip: Trip) {
+  deleteTrip(trip: TripWithOwnership) {
     if (trip.id !== undefined && confirm(`Are you sure you want to delete the trip "${trip.title}"?`)) {
       this.tripService.deleteTrip(trip.id).subscribe({
         next: () => {
-          this.trips = this.trips.filter(t => t.id !== trip.id);
+          this.displayedTrips = this.displayedTrips.filter(t => t.id !== trip.id);
         },
         error: (err) => {
           console.error('Error deleting trip:', err);
@@ -120,7 +134,7 @@ export class TripListComponent implements OnChanges {
     }
   }
 
-  openRatingModal(trip: Trip) {
+  openRatingModal(trip: TripWithOwnership) {
     const dialogRef = this.dialog.open(RateTripComponent, {
       width: '400px',
       data: { tripId: trip.id }

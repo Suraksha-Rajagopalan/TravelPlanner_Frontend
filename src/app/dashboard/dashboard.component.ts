@@ -17,6 +17,7 @@ import { RateTripComponent } from '../rating/rate-trip/rate-trip.component';
 })
 export class DashboardComponent implements OnInit {
   trips: Trip[] = [];
+  sharedTrips: Trip[] = [];
   username: string = '';
   isLoggedIn: boolean = false;
   loading: boolean = true;
@@ -30,42 +31,30 @@ export class DashboardComponent implements OnInit {
     const user = JSON.parse(userData);
     this.username = user.username;
     this.isLoggedIn = true;
-  }
 
-  this.tripService.getTrips().subscribe({
-    next: (trips) => {
-      this.trips = trips;
-      this.loading = false;
-    },
-    error: () => {
-      this.errorMessage = 'Failed to load trips. Please try again later.';
-      this.loading = false;
-    }
-  });
+    // Load user's own trips
+    this.tripService.getTrips().subscribe({
+      next: (trips) => {
+        this.trips = trips;
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load trips. Please try again later.';
+        this.loading = false;
+      }
+    });
+
+    // Load shared trips
+    this.tripService.getSharedTrips().subscribe({
+      next: (shared: Trip[]) => {
+        this.sharedTrips = shared;
+      },
+      error: () => {
+        console.error("Failed to load shared trips");
+      }
+    });
+  }
 }
-
-
-  logout(): void {
-    localStorage.removeItem('user');
-    localStorage.removeItem('userProfileDetails');
-    this.isLoggedIn = false;
-    this.router.navigate(['/login']);
-  }
-
-  onLoginButtonClick() {
-    console.log("Login button clicked");
-    this.router.navigate(['/login']);
-  }
-
-  ViewProfile() {
-    console.log("Viewing Profile");
-    this.router.navigate(['/profile']);
-  }
-
-  TripCreation() {
-    console.log("Creating Trip");
-    this.router.navigate(['/trip-form']);
-  }
 
   // for popular trips- not being used need to remove it
   viewTrip(tripId?: number | string): void {
@@ -93,11 +82,6 @@ export class DashboardComponent implements OnInit {
   // For popular trips  
   onTripSelected(trip: Trip): void {
     this.router.navigate(['/trip-details', trip.id]); 
-  }
-
-  // To go to all Reviews
-  goToTripReviews() {
-    this.router.navigate(['/trip-reviews']);
   }
 
 }

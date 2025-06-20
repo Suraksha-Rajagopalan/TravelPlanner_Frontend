@@ -1,4 +1,3 @@
-<!-- src/app/trip/trip-checklist/trip-checklist.component.html -->
 <div class="container mt-4">
   <h4>Trip Checklist</h4>
   <div class="mb-3 d-flex">
@@ -19,11 +18,11 @@
         <input
           type="checkbox"
           class="form-check-input me-2"
-          [checked]="item.isCompleted"
+          [checked]="item.completed"
           (change)="toggleComplete(item)"
         />
-        <span [ngClass]="{ 'text-decoration-line-through': item.isCompleted }">
-          {{ item.text }}
+        <span [ngClass]="{ 'description-decoration-line-through': item.completed }">
+          {{ item.description }}
         </span>
       </div>
       <button class="btn btn-sm btn-danger" (click)="deleteItem(item)">

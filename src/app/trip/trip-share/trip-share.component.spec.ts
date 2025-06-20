@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OauthCallbackComponent } from './oauth-callback.component';
+import { TripShareComponent } from './trip-share.component';
 
-describe('OauthCallbackComponent', () => {
-  let component: OauthCallbackComponent;
-  let fixture: ComponentFixture<OauthCallbackComponent>;
+describe('TripShareComponent', () => {
+  let component: TripShareComponent;
+  let fixture: ComponentFixture<TripShareComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OauthCallbackComponent]
+      imports: [TripShareComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(OauthCallbackComponent);
+    fixture = TestBed.createComponent(TripShareComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
