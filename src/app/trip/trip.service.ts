@@ -238,6 +238,11 @@ deleteChecklistItem(tripId: number, id: number) {
   return this.http.delete(`https://localhost:7251/api/trips/${tripId}/checklist/${id}`);
 }
 
+getSharedTripChecklist(tripId: number): Observable<ChecklistItem[]> {
+  return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/shared-trips/${tripId}/checklist`);
+}
+
+
 
 // Budget Tracking
 

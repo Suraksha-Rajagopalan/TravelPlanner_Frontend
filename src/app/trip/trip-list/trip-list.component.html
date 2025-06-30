@@ -43,7 +43,7 @@
 
         <button
           class="btn btn-outline-dark btn-sm mt-3"
-          [routerLink]="['/trip', trip.id, 'checklist']"
+          (click)="goToChecklist(trip)"
         >
           Checklist
         </button>

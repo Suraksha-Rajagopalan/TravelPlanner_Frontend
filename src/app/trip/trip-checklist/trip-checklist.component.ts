@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TripService } from '../trip.service';
 import { AuthService } from '../../auth/auth.service';
 import { ChecklistItem } from '../../models/checklist';
@@ -13,7 +13,6 @@ import { ChecklistItem } from '../../models/checklist';
   templateUrl: './trip-checklist.component.html',
 })
 export class TripChecklistComponent implements OnInit {
-  private route = inject(ActivatedRoute);
   private tripService = inject(TripService);
   private authService = inject(AuthService);
 
@@ -21,21 +20,65 @@ export class TripChecklistComponent implements OnInit {
   userId!: number;
   checklist: ChecklistItem[] = [];
   newItemText: string = '';
+  editingItemId: number | null = null;
+  editedText: string = '';
+
+  isOwner: boolean = false;
+  accessLevel: string = 'View';
+
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    this.tripId = +this.route.snapshot.paramMap.get('id')!;
-    this.userId = this.authService.getUserId(); 
+    console.log('TripChecklistComponent initialized');
+
+    // Log the entire route snapshot
+    console.log('ActivatedRoute snapshot:', this.route.snapshot);
+
+    // Try to get tripId from the route params
+    const idFromRoute = this.route.snapshot.paramMap.get('tripId');
+    console.log('tripId from paramMap:', idFromRoute);
+
+    // Convert to number and assign
+    this.tripId = idFromRoute ? Number(idFromRoute) : NaN;
+    console.log('Converted tripId:', this.tripId);
+
+    if (!this.tripId || isNaN(this.tripId)) {
+      console.error('Invalid trip ID:', this.tripId);
+      return;
+    }
+
+    // Log additional access control info
+    const state = this.router.getCurrentNavigation()?.extras.state;
+    console.log('Navigation state:', state);
+
+    this.isOwner = state?.['isOwner'] ?? false;
+    this.accessLevel = state?.['accessLevel'] ?? 'View';
+    console.log(`isOwner: ${this.isOwner}, accessLevel: ${this.accessLevel}`);
+
+    this.userId = this.authService.getUserId();
+    console.log('Current userId:', this.userId);
+
     this.loadChecklist();
   }
 
+  get isReadOnly(): boolean {
+    return !this.isOwner || this.accessLevel === 'View';
+  }
+
   loadChecklist() {
-    this.tripService.getChecklist(this.tripId).subscribe(items => {
-      this.checklist = items;
-    });
+    if (this.isReadOnly) {
+      this.tripService.getSharedTripChecklist(this.tripId).subscribe(items => {
+        this.checklist = items;
+      });
+    } else {
+      this.tripService.getChecklist(this.tripId).subscribe(items => {
+        this.checklist = items;
+      });
+    }
   }
 
   addItem() {
-    if (!this.newItemText.trim()) return;
+    if (this.isReadOnly || !this.newItemText.trim()) return;
 
     const newItem: ChecklistItem = {
       tripId: this.tripId,
@@ -51,13 +94,37 @@ export class TripChecklistComponent implements OnInit {
   }
 
   toggleComplete(item: ChecklistItem) {
+    if (this.isReadOnly) return;
+
     item.completed = !item.completed;
     this.tripService.updateChecklistItem(item).subscribe();
   }
 
   deleteItem(item: ChecklistItem) {
-  this.tripService.deleteChecklistItem(this.tripId, item.id!).subscribe(() => {
-    this.checklist = this.checklist.filter(i => i.id !== item.id);
-  });
-}
+    if (this.isReadOnly) return;
+
+    this.tripService.deleteChecklistItem(this.tripId, item.id!).subscribe(() => {
+      this.checklist = this.checklist.filter(i => i.id !== item.id);
+    });
+  }
+
+  startEdit(item: ChecklistItem) {
+    if (this.isReadOnly) return;
+
+    this.editingItemId = item.id!;
+    this.editedText = item.description;
+  }
+
+  saveEdit(item: ChecklistItem) {
+    if (!this.editedText.trim()) return;
+
+    item.description = this.editedText;
+    this.tripService.updateChecklistItem(item).subscribe(() => {
+      this.editingItemId = null;
+    });
+  }
+
+  cancelEdit() {
+    this.editingItemId = null;
+  }
 }

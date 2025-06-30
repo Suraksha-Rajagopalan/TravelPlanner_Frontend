@@ -150,4 +150,24 @@ export class TripListComponent implements OnChanges {
       }
     });
   }
+
+  // for checklist
+
+  goToChecklist(trip: any) {
+    console.log('Navigating to checklist for trip:', trip);
+
+    if (!trip || !trip.tripId) {
+      console.error('Invalid trip object or tripId:', trip);
+      return;
+    }
+
+    this.router.navigate(['/trip', trip.tripId, 'checklist'], {
+      state: {
+        isOwner: trip.isOwner,
+        accessLevel: trip.accessLevel
+      }
+    });
+  }
+
+
 }

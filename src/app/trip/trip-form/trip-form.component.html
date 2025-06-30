@@ -141,7 +141,7 @@
     <!-- Essentials -->
     <div class="col-12">
       <label class="form-label fw-semibold">Essentials</label>
-      <div *ngFor="let essential of trip.essentials; let i = index" class="input-group mb-2">
+      <div *ngFor="let essential of trip.essentials; let i = index; trackBy: trackByIndex" class="input-group mb-2">
         <input
           class="form-control"
           [(ngModel)]="trip.essentials![i]"
@@ -165,7 +165,7 @@
     <!-- Tourist Spots -->
     <div class="col-12 mt-4">
       <label class="form-label fw-semibold">Tourist Spots</label>
-      <div *ngFor="let spot of trip.touristSpots; let j = index" class="input-group mb-2">
+      <div *ngFor="let spot of trip.touristSpots; let j = index; trackBy: trackByIndex" class="input-group mb-2">
         <input
           class="form-control"
           [(ngModel)]="trip.touristSpots![j]"

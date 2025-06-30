@@ -33,8 +33,8 @@ export class TripFormComponent {
       food: 0,
       hotel: 0,
     },
-    essentials: [''],
-    touristSpots: [''],
+    essentials: [] as string[],
+    touristSpots: [] as string[],
   };
 
   constructor(private tripService: TripService, private authService: AuthService, private router: Router) {}
@@ -54,6 +54,11 @@ export class TripFormComponent {
   removeTouristSpot(index: number) {
     this.trip.touristSpots.splice(index, 1);
   }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
 
   onSubmit() {
 
