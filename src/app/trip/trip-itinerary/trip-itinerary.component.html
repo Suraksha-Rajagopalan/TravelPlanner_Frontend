@@ -4,7 +4,9 @@
 
     <form [formGroup]="formGroup" (ngSubmit)="addItineraryItem()">
       <div class="mb-3">
-        <label for="title" class="form-label fw-semibold">Title<span class="text-danger">*</span></label>
+        <label for="title" class="form-label fw-semibold"
+          >Title<span class="text-danger">*</span></label
+        >
         <input
           type="text"
           id="title"
@@ -13,13 +15,20 @@
           placeholder="e.g., Visit Eiffel Tower"
           required
         />
-        <div *ngIf="formGroup.get('title')?.touched && formGroup.get('title')?.invalid" class="text-danger mt-1">
+        <div
+          *ngIf="
+            formGroup.get('title')?.touched && formGroup.get('title')?.invalid
+          "
+          class="text-danger mt-1"
+        >
           Title is required
         </div>
       </div>
 
       <div class="mb-3">
-        <label for="description" class="form-label fw-semibold">Description</label>
+        <label for="description" class="form-label fw-semibold"
+          >Description</label
+        >
         <textarea
           id="description"
           formControlName="description"
@@ -30,7 +39,9 @@
       </div>
 
       <div class="mb-4">
-        <label for="scheduledDateTime" class="form-label fw-semibold">Date & Time<span class="text-danger">*</span></label>
+        <label for="scheduledDateTime" class="form-label fw-semibold"
+          >Date & Time<span class="text-danger">*</span></label
+        >
         <input
           type="datetime-local"
           id="scheduledDateTime"
@@ -38,16 +49,45 @@
           class="form-control"
           required
         />
-        <div *ngIf="formGroup.get('scheduledDateTime')?.touched && formGroup.get('scheduledDateTime')?.invalid" class="text-danger mt-1">
+        <div
+          *ngIf="
+            formGroup.get('scheduledDateTime')?.touched &&
+            formGroup.get('scheduledDateTime')?.invalid
+          "
+          class="text-danger mt-1"
+        >
           Date and time are required
         </div>
       </div>
 
       <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg" [disabled]="formGroup.invalid">
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg"
+          [disabled]="formGroup.invalid"
+        >
           + Add Itinerary Item
         </button>
       </div>
     </form>
+  </div>
+  <div class="mt-5">
+    <h3 class="fw-bold text-center mb-4">Scheduled Items</h3>
+    <ul class="list-group">
+      <li *ngFor="let item of itinerary" class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="mb-1">{{ item.title }}</h5>
+            <p class="mb-1">{{ item.description }}</p>
+            <small class="text-muted">{{
+              item.scheduledDateTime | date : "medium"
+            }}</small>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div *ngIf="itinerary.length === 0" class="text-center text-muted mt-4">
+      No itinerary items added yet.
+    </div>
   </div>
 </div>

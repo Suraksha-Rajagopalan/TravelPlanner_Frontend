@@ -35,8 +35,13 @@
         </button>
 
         <button
+          *ngIf="
+            trip.isOwner ||
+            trip.accessLevel === 'Edit' ||
+            trip.accessLevel === 'View'
+          "
           class="btn btn-outline-success btn-sm me-2 mt-3"
-          [routerLink]="['/trip', trip.id, 'itinerary']"
+          (click)="goToItinerary(trip)"
         >
           Itinerary
         </button>
@@ -56,7 +61,11 @@
         </button>
 
         <button
-          *ngIf="trip.isOwner || trip.accessLevel === 'Edit' || trip.accessLevel === 'View'"
+          *ngIf="
+            trip.isOwner ||
+            trip.accessLevel === 'Edit' ||
+            trip.accessLevel === 'View'
+          "
           class="btn btn-outline-secondary btn-sm me-2 mt-3"
           [routerLink]="getExpensesLink(trip)"
           [queryParams]="trip.accessLevel ? { shared: true } : null"
@@ -66,7 +75,7 @@
 
         <!-- Rating button -->
         <button
-          *ngIf="!trip.rating || trip.rating === 0"
+          *ngIf="(!trip.rating || trip.rating === 0) && trip.isOwner"
           class="btn btn-outline-info btn-sm me-2 mt-3"
           (click)="openRatingModal(trip)"
         >

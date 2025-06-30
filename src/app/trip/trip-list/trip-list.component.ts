@@ -34,7 +34,7 @@ export class TripListComponent implements OnChanges {
 
   newActivity: string = '';
   selectedTrip: Trip | null = null;
-  private userId: number = 0;
+  public userId: number = 0;
 
   constructor(
     private tripService: TripService,
@@ -80,8 +80,14 @@ export class TripListComponent implements OnChanges {
     });
   }
 
-  selectTrip(action: 'view' | 'edit', trip: TripWithOwnership): void {
-    this.tripSelected.emit({ action, trip });
+  selectTrip(action: 'view' | 'edit', trip: any): void {
+    const normalizedTrip = {
+      ...trip,
+      id: trip.id ?? trip.tripId,
+      isOwner: trip.isOwner ?? false,
+    };
+
+    this.tripSelected.emit({ action, trip: normalizedTrip });
   }
 
   shareTrip(trip: TripWithOwnership) {
@@ -154,7 +160,7 @@ export class TripListComponent implements OnChanges {
   // for checklist
 
   goToChecklist(trip: any) {
-    console.log('Navigating to checklist for trip:', trip);
+    //console.log('Navigating to checklist for trip:', trip);
 
     if (!trip || !trip.tripId) {
       console.error('Invalid trip object or tripId:', trip);
@@ -172,12 +178,40 @@ export class TripListComponent implements OnChanges {
   // for expense
 
   getExpensesLink(trip: any): any[] {
-    console.log('getExpensesLink() called with:', trip);
-    if (!trip || !trip.id) {
+    //console.log('getExpensesLink() called with:', trip);
+
+    const tripId = trip.tripId ?? trip.id;
+
+    if (!tripId) {
       console.warn('trip.id is missing!', trip);
     }
-    return ['/trip', trip.tripId, 'expenses'];
+    return ['/trip', tripId, 'expenses'];
   }
+
+  // for itinerary
+  goToItinerary(trip: any): void {
+    //console.log('goToItinerary() called with:', trip);
+
+    const tripId = trip.tripId ?? trip.id;
+
+    if (!tripId) {
+      console.warn('Invalid trip or tripId for itinerary navigation:', trip);
+      return;
+    }
+
+    //console.log('Navigating to itinerary with tripId:', tripId);
+
+    this.router.navigate(['/trip', tripId, 'itinerary'], {
+      state: {
+        isOwner: trip.isOwner,
+        accessLevel: trip.accessLevel
+      }
+    });
+  }
+
+
+
+
 
 
 }

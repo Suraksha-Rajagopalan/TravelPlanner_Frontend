@@ -36,7 +36,7 @@ const routes: Routes = [
   { path: 'trip-edit/:id', component: TripEditComponent },
   { path: 'rate-trip', component: RateTripComponent },
   { path: 'trip-reviews', component: TripReviewsComponent },
-  { path: 'trip/:id/itinerary', component: TripItineraryComponent },
+  { path: 'trip/:tripId/itinerary', component: TripItineraryComponent },
   { path: 'trip/:tripId/expenses', component: TripExpensesComponent },
   { path: 'trip/:tripId/checklist', component: TripChecklistComponent },
   { path: 'trip-share/:tripId', component: TripShareComponent },

@@ -25,31 +25,31 @@ export class TripExpensesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('ngOnInit triggered in TripExpensesComponent');
+    //console.log('ngOnInit triggered in TripExpensesComponent');
 
     const routeSnapshot = this.route.snapshot;
-    console.log('ActivatedRoute.snapshot:', routeSnapshot);
+    //console.log('ActivatedRoute.snapshot:', routeSnapshot);
 
     const paramMap = routeSnapshot.paramMap;
-    console.log('routeSnapshot.paramMap:', paramMap);
+    //console.log('routeSnapshot.paramMap:', paramMap);
 
     const tripIdParam = paramMap.get('tripId');
-    console.log('Extracted tripId param:', tripIdParam);
+    //console.log('Extracted tripId param:', tripIdParam);
 
     if (!tripIdParam || isNaN(+tripIdParam)) {
-      console.error('Invalid or missing tripId in route! Value:', tripIdParam);
+      //console.error('Invalid or missing tripId in route! Value:', tripIdParam);
       return;
     }
 
     this.tripId = +tripIdParam;
-    console.log('tripId parsed:', this.tripId);
+    //console.log('tripId parsed:', this.tripId);
 
     this.initForm();
     this.loadExpenses();
   }
 
   initForm() {
-    console.log('Initializing form...');
+    //console.log('Initializing form...');
     this.expenseForm = this.fb.group({
       category: ['', Validators.required],
       description: [''],

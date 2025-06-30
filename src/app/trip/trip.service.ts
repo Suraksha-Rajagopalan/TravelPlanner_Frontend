@@ -212,6 +212,11 @@ export class TripService {
     );
   }
 
+  getSharedItinerary(tripId: number): Observable<ItineraryItem[]> {
+    return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/shared/trips/${tripId}/itinerary`);
+  }
+
+
 
   updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
     return this.http.put<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${item.id}`, item);
