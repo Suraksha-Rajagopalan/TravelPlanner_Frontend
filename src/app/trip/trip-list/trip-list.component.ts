@@ -169,5 +169,15 @@ export class TripListComponent implements OnChanges {
     });
   }
 
+  // for expense
+
+  getExpensesLink(trip: any): any[] {
+    console.log('getExpensesLink() called with:', trip);
+    if (!trip || !trip.id) {
+      console.warn('trip.id is missing!', trip);
+    }
+    return ['/trip', trip.tripId, 'expenses'];
+  }
+
 
 }

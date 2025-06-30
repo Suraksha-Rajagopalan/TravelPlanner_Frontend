@@ -15,7 +15,7 @@ import { ChecklistItem } from '../models/checklist';
 export class TripService {
   private baseUrl = 'https://localhost:7251/api/Trip';
 
-    sampleTrips: Trip[] = [
+  sampleTrips: Trip[] = [
     {
       id: 101,
       title: 'Beach Getaway',
@@ -129,7 +129,7 @@ export class TripService {
   ];
   private myTrips: Trip[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Backend API Methods
   getTrips(): Observable<Trip[]> {
@@ -141,7 +141,7 @@ export class TripService {
   }
 
   addTrip(trip: Trip) {
-  return this.http.post<Trip>(this.baseUrl, trip);
+    return this.http.post<Trip>(this.baseUrl, trip);
   }
 
 
@@ -181,8 +181,8 @@ export class TripService {
     return this.http.get<Review[]>(`${this.baseUrl}/${tripId}/reviews`).pipe(
       map(reviews => reviews.length > 0 ? reviews[0] : null),
       catchError(() => of(null))
-  );
-}
+    );
+  }
 
 
 
@@ -200,74 +200,78 @@ export class TripService {
   }
 
   //Itinerarys-
-getItinerary(tripId: number): Observable<ItineraryItem[]> {
-  return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/trips/${tripId}/itinerary`);
-}
+  getItinerary(tripId: number): Observable<ItineraryItem[]> {
+    return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/trips/${tripId}/itinerary`);
+  }
 
-addItineraryItem(tripId: number, item: ItineraryItemCreate): Observable<ItineraryItem> {
-  console.log('Sending:', item);  // what is sent to the backend
-  return this.http.post<ItineraryItem>(
-    `https://localhost:7251/api/trips/${tripId}/itinerary`,
-    item
-  );
-}
-
-
-updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
-  return this.http.put<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${item.id}`, item);
-}
-
-deleteItineraryItem(tripId: number, id: number): Observable<void> {
-  return this.http.delete<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${id}`);
-}
-
-// src/app/trip/trip.service.ts
-getChecklist(tripId: number) {
-  return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/trips/${tripId}/checklist`);
-}
-
-addChecklistItem(item: ChecklistItem) {
-  return this.http.post<ChecklistItem>(`https://localhost:7251/api/trips/${item.tripId}/checklist`, item);
-}
-
-updateChecklistItem(item: ChecklistItem) {
-  return this.http.put(`https://localhost:7251/api/trips/${item.tripId}/checklist/${item.id}`, item);
-}
-
-deleteChecklistItem(tripId: number, id: number) {
-  return this.http.delete(`https://localhost:7251/api/trips/${tripId}/checklist/${id}`);
-}
-
-getSharedTripChecklist(tripId: number): Observable<ChecklistItem[]> {
-  return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/shared-trips/${tripId}/checklist`);
-}
+  addItineraryItem(tripId: number, item: ItineraryItemCreate): Observable<ItineraryItem> {
+    console.log('Sending:', item);  // what is sent to the backend
+    return this.http.post<ItineraryItem>(
+      `https://localhost:7251/api/trips/${tripId}/itinerary`,
+      item
+    );
+  }
 
 
+  updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
+    return this.http.put<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${item.id}`, item);
+  }
 
-// Budget Tracking
+  deleteItineraryItem(tripId: number, id: number): Observable<void> {
+    return this.http.delete<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${id}`);
+  }
 
-// src/app/trip/trip.service.ts
+  // src/app/trip/trip.service.ts
+  getChecklist(tripId: number) {
+    return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/trips/${tripId}/checklist`);
+  }
 
-getExpenses(tripId: number) {
-  return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/expenses`);
-}
+  addChecklistItem(item: ChecklistItem) {
+    return this.http.post<ChecklistItem>(`https://localhost:7251/api/trips/${item.tripId}/checklist`, item);
+  }
 
-addExpense(tripId: number, expense: any) {
-  return this.http.post(`https://localhost:7251/api/trips/${tripId}/expenses`, expense);
-}
+  updateChecklistItem(item: ChecklistItem) {
+    return this.http.put(`https://localhost:7251/api/trips/${item.tripId}/checklist/${item.id}`, item);
+  }
 
-deleteExpense(tripId: number, id: number) {
-  return this.http.delete(`https://localhost:7251/api/trips/${tripId}/expenses/${id}`);
-}
+  deleteChecklistItem(tripId: number, id: number) {
+    return this.http.delete(`https://localhost:7251/api/trips/${tripId}/checklist/${id}`);
+  }
 
-updateExpense(tripId: number, expenseId: number, expense: any): Observable<any> {
-  return this.http.put(`https://localhost:7251/api/trips/${tripId}/expenses/${expenseId}`, expense);
-}
+  getSharedTripChecklist(tripId: number): Observable<ChecklistItem[]> {
+    return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/shared-trips/${tripId}/checklist`);
+  }
 
 
-// Shared trips
 
-shareTrip(data: {
+  // Budget Tracking
+
+  // src/app/trip/trip.service.ts
+
+  getExpenses(tripId: number) {
+    return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/expenses`);
+  }
+
+  addExpense(tripId: number, expense: any) {
+    return this.http.post(`https://localhost:7251/api/trips/${tripId}/expenses`, expense);
+  }
+
+  deleteExpense(tripId: number, id: number) {
+    return this.http.delete(`https://localhost:7251/api/trips/${tripId}/expenses/${id}`);
+  }
+
+  updateExpense(tripId: number, expenseId: number, expense: any): Observable<any> {
+    return this.http.put(`https://localhost:7251/api/trips/${tripId}/expenses/${expenseId}`, expense);
+  }
+
+  getSharedExpenses(tripId: number) {
+    return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/shared-expenses`);
+  }
+
+
+  // Shared trips
+
+  shareTrip(data: {
     tripId: number;
     sharedWithEmail: string;
     accessLevel: 'view' | 'edit';
