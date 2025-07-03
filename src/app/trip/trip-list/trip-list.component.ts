@@ -94,7 +94,7 @@ export class TripListComponent implements OnChanges {
     this.router.navigate(['/trip-share', trip.id], { state: { trip } });
   }
 
-  saveTripEdits(updatedTrip: TripWithOwnership) {
+  saveTripEdits(updatedTrip: Trip) {
     this.tripService.updateTrip(updatedTrip).subscribe({
       next: () => {
         const index = this.displayedTrips.findIndex(t => t.id === updatedTrip.id);
@@ -106,6 +106,8 @@ export class TripListComponent implements OnChanges {
       error: (err) => console.error('Error updating trip:', err)
     });
   }
+
+
 
   cancelEdit() {
     this.selectedTrip = null;

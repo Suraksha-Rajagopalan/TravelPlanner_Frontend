@@ -3,6 +3,6 @@
 import { Trip } from './trip';
 
 export interface TripWithOwnership extends Trip {
-  isOwner: boolean;
+  isOwner?: boolean;
   accessLevel?: 'View' | 'Edit';
 }

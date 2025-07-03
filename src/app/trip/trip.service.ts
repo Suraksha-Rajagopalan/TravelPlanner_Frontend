@@ -154,6 +154,11 @@ export class TripService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  updateSharedTrip(trip: Trip): Observable<Trip> {
+    return this.http.put<Trip>(`${this.baseUrl}/shared/${trip.id}`, trip);
+  }
+
+
   // Local Sample & MyTrips Methods
   getSampleTrips(): Trip[] {
     return this.sampleTrips;

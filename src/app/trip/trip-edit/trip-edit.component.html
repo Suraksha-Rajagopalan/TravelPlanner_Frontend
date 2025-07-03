@@ -1,4 +1,4 @@
-<div class="container mt-4">
+<div class="container mt-4" *ngIf="tripForm">
   <h2>Edit Trip</h2>
   <form [formGroup]="tripForm" (ngSubmit)="onSubmit()">
     <div class="mb-3">

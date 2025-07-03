@@ -54,6 +54,7 @@
         </button>
 
         <button
+          *ngIf="trip.isOwner"
           class="btn btn-outline-danger btn-sm me-2 mt-3"
           (click)="deleteTrip(trip)"
         >
