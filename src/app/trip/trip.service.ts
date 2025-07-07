@@ -189,8 +189,6 @@ export class TripService {
     );
   }
 
-
-
   // Ratings-
   submitRatingAndReview(tripId: number, rating: number, review: string) {
     return this.http.post(`${this.baseUrl}/${tripId}/review`, { rating, review });

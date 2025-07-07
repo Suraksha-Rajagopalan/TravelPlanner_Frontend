@@ -9,7 +9,9 @@
       placeholder="Add checklist item..."
       [disabled]="isReadOnly"
     />
-    <button class="btn btn-primary" (click)="addItem()" [disabled]="isReadOnly">Add</button>
+    <button 
+    *ngIf="this.isOwner || this.accessLevel === 'Edit'"
+    class="btn btn-primary" (click)="addItem()" [disabled]="isReadOnly">Add</button>
   </div>
 
   <!-- Checklist Items -->
@@ -48,7 +50,7 @@
         <div class="ms-2" *ngIf="!isReadOnly">
           <!-- Edit -->
           <button
-            *ngIf="editingItemId !== item.id"
+            *ngIf="(editingItemId !== item.id) && (this.isOwner || this.accessLevel === 'Edit')"
             class="btn btn-sm btn-secondary me-1"
             (click)="startEdit(item)"
           >
@@ -57,14 +59,14 @@
 
           <!-- Save & Cancel -->
           <button
-            *ngIf="editingItemId === item.id"
+            *ngIf="(editingItemId === item.id) && (this.isOwner || this.accessLevel === 'Edit')"
             class="btn btn-sm btn-success me-1"
             (click)="saveEdit(item)"
           >
             Save
           </button>
           <button
-            *ngIf="editingItemId === item.id"
+            *ngIf="(editingItemId === item.id) && (this.isOwner || this.accessLevel === 'Edit')"
             class="btn btn-sm btn-warning me-1"
             (click)="cancelEdit()"
           >
@@ -73,6 +75,7 @@
 
           <!-- Delete -->
           <button
+          *ngIf="this.isOwner || this.accessLevel === 'Edit'"
             class="btn btn-sm btn-danger"
             (click)="deleteItem(item)"
           >

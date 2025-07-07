@@ -107,8 +107,6 @@ export class TripListComponent implements OnChanges {
     });
   }
 
-
-
   cancelEdit() {
     this.selectedTrip = null;
   }
@@ -161,21 +159,20 @@ export class TripListComponent implements OnChanges {
 
   // for checklist
 
-  goToChecklist(trip: any) {
-    //console.log('Navigating to checklist for trip:', trip);
-
-    if (!trip || !trip.tripId) {
-      console.error('Invalid trip object or tripId:', trip);
+  goToChecklist(trip: Trip | any) {
+    const tripId = Number(trip?.id ?? trip?.tripId);
+    if (!trip || !tripId) {
+      console.error("Invalid trip object or tripId:", trip);
       return;
     }
 
-    this.router.navigate(['/trip', trip.tripId, 'checklist'], {
-      state: {
-        isOwner: trip.isOwner,
-        accessLevel: trip.accessLevel
-      }
+    const accessLevel = trip.accessLevel ?? 'view'; // default fallback if missing
+
+    this.router.navigate(['/trip', tripId, 'checklist'], {
+      queryParams: { accessLevel }
     });
   }
+
 
   // for expense
 

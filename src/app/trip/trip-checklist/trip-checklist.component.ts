@@ -31,14 +31,7 @@ export class TripChecklistComponent implements OnInit {
   ngOnInit() {
     console.log('TripChecklistComponent initialized');
 
-    // Log the entire route snapshot
-    console.log('ActivatedRoute snapshot:', this.route.snapshot);
-
-    // Try to get tripId from the route params
     const idFromRoute = this.route.snapshot.paramMap.get('tripId');
-    console.log('tripId from paramMap:', idFromRoute);
-
-    // Convert to number and assign
     this.tripId = idFromRoute ? Number(idFromRoute) : NaN;
     console.log('Converted tripId:', this.tripId);
 
@@ -47,35 +40,39 @@ export class TripChecklistComponent implements OnInit {
       return;
     }
 
-    // Log additional access control info
-    const state = this.router.getCurrentNavigation()?.extras.state;
-    console.log('Navigation state:', state);
-
-    this.isOwner = state?.['isOwner'] ?? false;
-    this.accessLevel = state?.['accessLevel'] ?? 'View';
-    console.log(`isOwner: ${this.isOwner}, accessLevel: ${this.accessLevel}`);
-
     this.userId = this.authService.getUserId();
     console.log('Current userId:', this.userId);
 
-    this.loadChecklist();
+    // Get accessLevel from navigation state
+    this.route.queryParams.subscribe(params => {
+      this.accessLevel = params['accessLevel'] ?? 'View';
+      console.log('Access Level from queryParams:', this.accessLevel);
+    });
+
+    this.loadTripAndChecklist();
   }
 
   get isReadOnly(): boolean {
-    return !this.isOwner || this.accessLevel === 'View';
+    return !(this.isOwner || this.accessLevel === 'Edit');
   }
 
-  loadChecklist() {
-    if (this.isReadOnly) {
-      this.tripService.getSharedTripChecklist(this.tripId).subscribe(items => {
-        this.checklist = items;
-      });
-    } else {
-      this.tripService.getChecklist(this.tripId).subscribe(items => {
-        this.checklist = items;
-      });
-    }
+  loadTripAndChecklist() {
+    this.tripService.getTripByIdFromBackend(this.tripId).subscribe(trip => {
+      this.isOwner = trip.userId === this.userId;
+
+      if (this.isOwner || this.accessLevel === 'Edit') {
+        this.tripService.getChecklist(this.tripId).subscribe(items => {
+          this.checklist = items;
+        });
+      } else {
+        // Shared read-only access
+        this.tripService.getSharedTripChecklist(this.tripId).subscribe(items => {
+          this.checklist = items;
+        });
+      }
+    });
   }
+
 
   addItem() {
     if (this.isReadOnly || !this.newItemText.trim()) return;

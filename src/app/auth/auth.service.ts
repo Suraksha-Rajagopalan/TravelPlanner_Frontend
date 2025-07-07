@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7251/api/Auth'; 
+  private apiUrl = 'https://localhost:7251/api/Auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(email: string, password: string): Observable<{ token: string }> {
     const body = { email, password };
@@ -25,8 +25,8 @@ export class AuthService {
   }
 
   getUserId(): number {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user?.id ? parseInt(user.id, 10) : 0;
-}
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user?.id ? parseInt(user.id, 10) : 0;
+  }
 
 }
