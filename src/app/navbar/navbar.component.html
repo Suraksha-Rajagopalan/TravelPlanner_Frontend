@@ -28,6 +28,11 @@
       <li class="nav-item">
         <a class="nav-link fw-semibold text-dark" (click)="goToTripReviews()">Trip Reviews</a>
       </li>
+      <li 
+      *ngIf="user.role == 'Admin'"
+      class="nav-item">
+        <a class="nav-link fw-semibold text-dark" (click)="goToAdmin()">Admin Page</a>
+      </li>
     </ul>
 
     <!-- Right-side user actions -->

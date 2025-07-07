@@ -17,7 +17,7 @@ export class LoginComponent {
   emailError: string | null = null;
   passwordError: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   onLogin() {
     localStorage.removeItem('jwtToken');
@@ -39,11 +39,16 @@ export class LoginComponent {
           username: payload.unique_name || payload.username,
           email: payload.email,
           id: parseInt(payload.nameid, 10) || parseInt(payload.id, 10),
+          role: payload.role || payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
         };
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Navigate to dashboard
-        this.router.navigate(['/dashboard']);
+        // Navigate based on role
+        if (user.role === 'Admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
         console.error('Login failed', err);

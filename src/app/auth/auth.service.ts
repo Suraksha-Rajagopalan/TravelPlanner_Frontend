@@ -29,4 +29,11 @@ export class AuthService {
     return user?.id ? parseInt(user.id, 10) : 0;
   }
 
+  // For navbar to get the role for admin page
+  getCurrentUser() {
+    const userJson = localStorage.getItem('user');
+    return userJson ? JSON.parse(userJson) : null;
+  }
+
+
 }

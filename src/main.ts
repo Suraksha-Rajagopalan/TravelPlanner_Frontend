@@ -23,6 +23,7 @@ import { TripItineraryComponent } from './app/trip/trip-itinerary/trip-itinerary
 import { TripChecklistComponent } from './app/trip/trip-checklist/trip-checklist.component';
 import { TripExpensesComponent } from './app/trip/trip-expenses/trip-expenses.component';
 import { TripShareComponent } from './app/trip/trip-share/trip-share.component';
+import { AdminComponent } from './app/admin.component';
 
 const routes: Routes = [
   { path: 'trip-list', component: TripListComponent },
@@ -41,6 +42,7 @@ const routes: Routes = [
   { path: 'trip/:tripId/checklist', component: TripChecklistComponent },
   { path: 'trip-share/:tripId', component: TripShareComponent },
   { path: 'trip-form', component: TripFormComponent, canActivate: [authGuard] },
+  { path: 'admin', component: AdminComponent},
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
 ];
 
