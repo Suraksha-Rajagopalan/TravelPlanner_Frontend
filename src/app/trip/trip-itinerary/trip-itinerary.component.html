@@ -62,6 +62,7 @@
 
       <div class="d-grid">
         <button
+          *ngIf="this.isOwner || this.accessLevel === 'Edit'"
           type="submit"
           class="btn btn-primary btn-lg"
           [disabled]="formGroup.invalid"

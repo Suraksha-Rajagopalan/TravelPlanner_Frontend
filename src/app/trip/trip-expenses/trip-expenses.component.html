@@ -38,6 +38,7 @@
 
     <div class="col-12 text-end">
       <button
+        *ngIf="this.isOwner || this.accessLevel === 'Edit'"
         type="submit"
         class="btn btn-primary"
         [disabled]="expenseForm.invalid"
@@ -65,10 +66,18 @@
       <div *ngIf="expense.description">
         <small class="text-muted">Description: {{ expense.description }}</small>
       </div>
-      <button class="btn btn-sm btn-secondary" (click)="editExpense(expense)">
+      <button
+        *ngIf="this.isOwner || this.accessLevel === 'Edit'"
+        class="btn btn-sm btn-secondary"
+        (click)="editExpense(expense)"
+      >
         Edit
       </button>
-      <button class="btn btn-sm btn-danger" (click)="deleteExpense(expense.id)">
+      <button
+        *ngIf="this.isOwner || this.accessLevel === 'Edit'"
+        class="btn btn-sm btn-danger"
+        (click)="deleteExpense(expense.id)"
+      >
         Delete
       </button>
     </li>

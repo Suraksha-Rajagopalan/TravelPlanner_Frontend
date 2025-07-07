@@ -29,11 +29,11 @@ export class TripChecklistComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    console.log('TripChecklistComponent initialized');
+    //console.log('TripChecklistComponent initialized');
 
     const idFromRoute = this.route.snapshot.paramMap.get('tripId');
     this.tripId = idFromRoute ? Number(idFromRoute) : NaN;
-    console.log('Converted tripId:', this.tripId);
+    //console.log('Converted tripId:', this.tripId);
 
     if (!this.tripId || isNaN(this.tripId)) {
       console.error('Invalid trip ID:', this.tripId);
@@ -41,12 +41,12 @@ export class TripChecklistComponent implements OnInit {
     }
 
     this.userId = this.authService.getUserId();
-    console.log('Current userId:', this.userId);
+    //console.log('Current userId:', this.userId);
 
     // Get accessLevel from navigation state
     this.route.queryParams.subscribe(params => {
       this.accessLevel = params['accessLevel'] ?? 'View';
-      console.log('Access Level from queryParams:', this.accessLevel);
+      //console.log('Access Level from queryParams:', this.accessLevel);
     });
 
     this.loadTripAndChecklist();

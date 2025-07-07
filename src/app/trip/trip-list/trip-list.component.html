@@ -35,11 +35,6 @@
         </button>
 
         <button
-          *ngIf="
-            trip.isOwner ||
-            trip.accessLevel === 'Edit' ||
-            trip.accessLevel === 'View'
-          "
           class="btn btn-outline-success btn-sm me-2 mt-3"
           (click)="goToItinerary(trip)"
         >
@@ -62,14 +57,8 @@
         </button>
 
         <button
-          *ngIf="
-            trip.isOwner ||
-            trip.accessLevel === 'Edit' ||
-            trip.accessLevel === 'View'
-          "
           class="btn btn-outline-secondary btn-sm me-2 mt-3"
-          [routerLink]="getExpensesLink(trip)"
-          [queryParams]="trip.accessLevel ? { shared: true } : null"
+          (click)="getExpensesLink(trip)"
         >
           Track Budget
         </button>

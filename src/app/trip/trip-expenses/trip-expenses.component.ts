@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../trip.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-trip-expenses',
@@ -11,18 +12,23 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
 })
 export class TripExpensesComponent implements OnInit {
+  private authService = inject(AuthService);
+
+  userId!: number;
   tripId!: number;
   expenseForm!: FormGroup;
   expenses: any[] = [];
   summary: any[] = [];
   total: number = 0;
   editingExpense: any = null;
+  isOwner: boolean = false;
+  accessLevel: string = 'View';
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private tripService: TripService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     //console.log('ngOnInit triggered in TripExpensesComponent');
@@ -44,6 +50,18 @@ export class TripExpensesComponent implements OnInit {
     this.tripId = +tripIdParam;
     //console.log('tripId parsed:', this.tripId);
 
+    this.route.queryParams.subscribe(params => {
+      this.accessLevel = params['accessLevel'] ?? 'View';
+    });
+
+    this.userId = this.authService.getUserId();
+
+    this.tripService.getTripByIdFromBackend(this.tripId).subscribe(trip => {
+      //console.log(trip.userId, this.userId);
+      this.isOwner = trip.userId === this.userId;
+    });
+    //console.log("Owner",this.isOwner,"Access Level", this.accessLevel);
+
     this.initForm();
     this.loadExpenses();
   }
@@ -59,7 +77,7 @@ export class TripExpensesComponent implements OnInit {
   }
 
   loadExpenses() {
-    console.log(`Loading expenses for tripId=${this.tripId}`);
+    //console.log(`Loading expenses for tripId=${this.tripId}`);
     this.tripService.getExpenses(this.tripId).subscribe({
       next: (res) => {
         console.log('Expenses loaded:', res);

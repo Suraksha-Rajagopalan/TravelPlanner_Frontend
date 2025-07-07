@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { TripService } from '../trip.service';
 import { ItineraryItem, ItineraryItemCreate } from '../../models/itinerary';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-trip-itinerary',
@@ -28,9 +29,14 @@ import { ItineraryItem, ItineraryItemCreate } from '../../models/itinerary';
   ]
 })
 export class TripItineraryComponent implements OnInit {
+  private authService = inject(AuthService);
+
   tripId!: number;
+  userId!: number;
   itinerary: ItineraryItem[] = [];
   isViewOnly: boolean = false;
+  isOwner: boolean = false;
+  accessLevel: string = 'View';
 
   formGroup: FormGroup = new FormGroup({
     title: new FormControl('', Validators.required),
@@ -41,7 +47,7 @@ export class TripItineraryComponent implements OnInit {
   constructor(
     private tripService: TripService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('tripId');
@@ -54,36 +60,49 @@ export class TripItineraryComponent implements OnInit {
 
     this.tripId = parsedId;
 
-    this.loadItinerary();
-  }
+    this.route.queryParams.subscribe(params => {
+      this.accessLevel = params['accessLevel'] ?? 'View';
+    });
+
+    this.userId = this.authService.getUserId();
+
+    this.tripService.getTripByIdFromBackend(this.tripId).subscribe(trip => {
+      //console.log(trip.userId, this.userId);
+      this.isOwner = trip.userId === this.userId;
+    });
+
+    //console.log("Owner",this.isOwner,"Access Level", this.accessLevel);
+
+      this.loadItinerary();
+    }
 
   loadItinerary(): void {
-    this.tripService.getItinerary(this.tripId).subscribe({
-      next: (data: ItineraryItem[]) => {
-        this.itinerary = data;
-        this.isViewOnly = false;
-      },
-      error: (err) => {
-        if (err.status === 403 || err.status === 404) {
-          // Try shared itinerary as fallback
-          this.tripService.getSharedItinerary(this.tripId).subscribe({
-            next: (sharedData: ItineraryItem[]) => {
-              this.itinerary = sharedData;
-              this.isViewOnly = true;
-            },
-            error: (sharedErr) => {
-              console.error('Failed to load shared itinerary', sharedErr);
-            }
-          });
-        } else {
-          console.error('Failed to load itinerary', err);
+      this.tripService.getItinerary(this.tripId).subscribe({
+        next: (data: ItineraryItem[]) => {
+          this.itinerary = data;
+          this.isViewOnly = false;
+        },
+        error: (err) => {
+          if (err.status === 403 || err.status === 404) {
+            // Try shared itinerary as fallback
+            this.tripService.getSharedItinerary(this.tripId).subscribe({
+              next: (sharedData: ItineraryItem[]) => {
+                this.itinerary = sharedData;
+                this.isViewOnly = true;
+              },
+              error: (sharedErr) => {
+                console.error('Failed to load shared itinerary', sharedErr);
+              }
+            });
+          } else {
+            console.error('Failed to load itinerary', err);
+          }
         }
-      }
-    });
-  }
+      });
+    }
 
   addItineraryItem(): void {
-    if (this.isViewOnly) {
+      if(this.isViewOnly) {
       console.warn('Cannot add items in view-only mode.');
       return;
     }

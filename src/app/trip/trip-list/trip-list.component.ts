@@ -176,7 +176,7 @@ export class TripListComponent implements OnChanges {
 
   // for expense
 
-  getExpensesLink(trip: any): any[] {
+  getExpensesLink(trip: Trip | any) {
     //console.log('getExpensesLink() called with:', trip);
 
     const tripId = trip.tripId ?? trip.id;
@@ -184,7 +184,12 @@ export class TripListComponent implements OnChanges {
     if (!tripId) {
       console.warn('trip.id is missing!', trip);
     }
-    return ['/trip', tripId, 'expenses'];
+
+    const accessLevel = trip.accessLevel ?? 'View';
+
+    this.router.navigate(['/trip', tripId, 'expenses'], {
+      queryParams: { accessLevel }
+    });
   }
 
   // for itinerary
@@ -198,13 +203,12 @@ export class TripListComponent implements OnChanges {
       return;
     }
 
+    const accessLevel = trip.accessLevel ?? 'View';
+
     //console.log('Navigating to itinerary with tripId:', tripId);
 
     this.router.navigate(['/trip', tripId, 'itinerary'], {
-      state: {
-        isOwner: trip.isOwner,
-        accessLevel: trip.accessLevel
-      }
+      queryParams: { accessLevel }
     });
   }
 
