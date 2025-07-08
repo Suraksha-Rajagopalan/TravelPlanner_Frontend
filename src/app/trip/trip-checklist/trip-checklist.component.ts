@@ -81,7 +81,7 @@ export class TripChecklistComponent implements OnInit {
       tripId: this.tripId,
       userId: this.userId,
       description: this.newItemText,
-      completed: false,
+      isCompleted: false,
     };
 
     this.tripService.addChecklistItem(newItem).subscribe(added => {
@@ -93,7 +93,7 @@ export class TripChecklistComponent implements OnInit {
   toggleComplete(item: ChecklistItem) {
     if (this.isReadOnly) return;
 
-    item.completed = !item.completed;
+    item.isCompleted = !item.isCompleted;
     this.tripService.updateChecklistItem(item).subscribe();
   }
 

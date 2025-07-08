@@ -2,6 +2,6 @@ export interface ChecklistItem {
   id?: number;
   tripId: number;
   description: string;
-  completed: boolean;
+  isCompleted: boolean;
   userId?: number;
 }

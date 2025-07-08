@@ -72,7 +72,7 @@ export class TripExpensesComponent implements OnInit {
       category: ['', Validators.required],
       description: [''],
       amount: [0, [Validators.required, Validators.min(0.01)]],
-      date: [new Date().toISOString().substring(0, 10), Validators.required],
+      date: [new Date().toISOString().substring(0, 16), Validators.required],
     });
   }
 
@@ -97,7 +97,7 @@ export class TripExpensesComponent implements OnInit {
       category: '',
       description: '',
       amount: 0,
-      date: new Date().toISOString().substring(0, 10),
+      date: new Date().toISOString().substring(0, 16),
     });
     this.editingExpense = null;
   }
@@ -117,6 +117,8 @@ export class TripExpensesComponent implements OnInit {
       amount: raw.amount,
       date: new Date(raw.date).toISOString(),
     };
+
+    console.log('Original expense date:', expense.date);
 
     if (this.editingExpense) {
       console.log('Updating expense ID:', this.editingExpense.id);
