@@ -25,7 +25,7 @@
         <input
           type="checkbox"
           class="form-check-input me-2"
-          [checked]="item.completed"
+          [checked]="item.isCompleted"
           (change)="toggleComplete(item)"
           [disabled]="isReadOnly"
         />
@@ -34,7 +34,7 @@
         <div class="flex-grow-1">
           <span
             *ngIf="editingItemId !== item.id"
-            [ngClass]="{ 'text-decoration-line-through': item.completed }"
+            [ngClass]="{ 'text-decoration-line-through': item.isCompleted }"
           >
             {{ item.description }}
           </span>
