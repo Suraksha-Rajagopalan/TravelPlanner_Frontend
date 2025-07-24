@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7251/api/Auth';
+  private apiUrl = 'http://localhost:5276/api/Auth';
+  private userSubject = new BehaviorSubject<any>(this.getUserFromStorage());
+  user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<{ token: string }> {
-    const body = { email, password };
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, body, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    });
+  login(email: string, password: string): Observable<{ accessToken: string; refreshToken: string; user: { id: number; username: string; email: string; role: string } }> {
+    return this.http.post<{ accessToken: string; refreshToken: string; user: { id: number; username: string; email: string; role: string } }>(
+      `${this.apiUrl}/login`,
+      { email, password }
+    );
   }
 
   signup(name: string, email: string, password: string): Observable<{ message: string }> {
@@ -24,16 +26,39 @@ export class AuthService {
     });
   }
 
+  logout(): void {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('refreshToken');
+    this.userSubject.next(null);
+  }
+
+  getCurrentUser() {
+    return this.userSubject.value;
+  }
+
   getUserId(): number {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = this.getCurrentUser();
     return user?.id ? parseInt(user.id, 10) : 0;
   }
 
-  // For navbar to get the role for admin page
-  getCurrentUser() {
+  refreshToken() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<{ accessToken: string }>(
+      'http://localhost:5276/api/token/refresh',
+      { refreshToken }
+    );
+  }
+
+  setUser(user: any, token: string, refreshToken: string) {
+    localStorage.setItem('jwtToken', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+    this.userSubject.next(user);
+  }
+
+  private getUserFromStorage() {
     const userJson = localStorage.getItem('user');
     return userJson ? JSON.parse(userJson) : null;
   }
-
-
 }

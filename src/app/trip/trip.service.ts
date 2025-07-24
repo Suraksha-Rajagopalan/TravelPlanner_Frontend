@@ -13,7 +13,7 @@ import { ChecklistItem } from '../models/checklist';
   providedIn: 'root'
 })
 export class TripService {
-  private baseUrl = 'https://localhost:7251/api/Trip';
+  private baseUrl = 'http://localhost:5276/api';
 
   sampleTrips: Trip[] = [
     {
@@ -133,29 +133,29 @@ export class TripService {
 
   // Backend API Methods
   getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(this.baseUrl);
+    return this.http.get<Trip[]>(`${this.baseUrl}/Trip`);
   }
 
   getTripByIdFromBackend(id: number): Observable<Trip> {
-    return this.http.get<Trip>(`${this.baseUrl}/${id}`);
+    return this.http.get<Trip>(`${this.baseUrl}/Trip/${id}`);
   }
 
   addTrip(trip: Trip) {
-    return this.http.post<Trip>(this.baseUrl, trip);
+    return this.http.post<Trip>(`${this.baseUrl}/Trip`, trip);
   }
 
 
   updateTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.baseUrl}/${trip.id}`, trip);
+    return this.http.put<Trip>(`${this.baseUrl}/Trip/${trip.id}`, trip);
   }
 
 
   deleteTrip(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/Trip/${id}`);
   }
 
   updateSharedTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.baseUrl}/shared/${trip.id}`, trip);
+    return this.http.put<Trip>(`${this.baseUrl}/Trip/shared/${trip.id}`, trip);
   }
 
 
@@ -183,7 +183,7 @@ export class TripService {
   // Functions for Reviews-
 
   getReview(tripId: number): Observable<Review | null> {
-    return this.http.get<Review[]>(`${this.baseUrl}/${tripId}/reviews`).pipe(
+    return this.http.get<Review[]>(`${this.baseUrl}/Trip/${tripId}/reviews`).pipe(
       map(reviews => reviews.length > 0 ? reviews[0] : null),
       catchError(() => of(null))
     );
@@ -191,63 +191,63 @@ export class TripService {
 
   // Ratings-
   submitRatingAndReview(tripId: number, rating: number, review: string) {
-    return this.http.post(`${this.baseUrl}/${tripId}/review`, { rating, review });
+    return this.http.post(`${this.baseUrl}/Trip/${tripId}/review`, { rating, review });
   }
 
 
   // For all reviwes and Ratings
   searchTripReviews(destination: string): Observable<any[]> {
-    return this.http.get<any[]>(`https://localhost:7251/api/TripReviews/search`, {
+    return this.http.get<any[]>(`${this.baseUrl}/TripReviews/search`, {
       params: { destination }
     });
   }
 
   //Itinerarys-
   getItinerary(tripId: number): Observable<ItineraryItem[]> {
-    return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/trips/${tripId}/itinerary`);
+    return this.http.get<ItineraryItem[]>(`${this.baseUrl}/trips/${tripId}/itinerary`);
   }
 
   addItineraryItem(tripId: number, item: ItineraryItemCreate): Observable<ItineraryItem> {
     console.log('Sending:', item);  // what is sent to the backend
     return this.http.post<ItineraryItem>(
-      `https://localhost:7251/api/trips/${tripId}/itinerary`,
+      `${this.baseUrl}/trips/${tripId}/itinerary`,
       item
     );
   }
 
   getSharedItinerary(tripId: number): Observable<ItineraryItem[]> {
-    return this.http.get<ItineraryItem[]>(`https://localhost:7251/api/shared/trips/${tripId}/itinerary`);
+    return this.http.get<ItineraryItem[]>(`${this.baseUrl}/shared/trips/${tripId}/itinerary`);
   }
 
 
 
   updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
-    return this.http.put<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${item.id}`, item);
+    return this.http.put<void>(`${this.baseUrl}/trips/${tripId}/itinerary/${item.id}`, item);
   }
 
   deleteItineraryItem(tripId: number, id: number): Observable<void> {
-    return this.http.delete<void>(`https://localhost:7251/api/trips/${tripId}/itinerary/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/trips/${tripId}/itinerary/${id}`);
   }
 
   // src/app/trip/trip.service.ts
   getChecklist(tripId: number) {
-    return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/trips/${tripId}/checklist`);
+    return this.http.get<ChecklistItem[]>(`${this.baseUrl}/trips/${tripId}/checklists`);
   }
 
   addChecklistItem(item: ChecklistItem) {
-    return this.http.post<ChecklistItem>(`https://localhost:7251/api/trips/${item.tripId}/checklist`, item);
+    return this.http.post<ChecklistItem>(`${this.baseUrl}/trips/${item.tripId}/checklists`, item);
   }
 
   updateChecklistItem(item: ChecklistItem) {
-    return this.http.put(`https://localhost:7251/api/trips/${item.tripId}/checklist/${item.id}`, item);
+    return this.http.put(`${this.baseUrl}/trips/${item.tripId}/checklists/${item.id}`, item);
   }
 
   deleteChecklistItem(tripId: number, id: number) {
-    return this.http.delete(`https://localhost:7251/api/trips/${tripId}/checklist/${id}`);
+    return this.http.delete(`${this.baseUrl}/trips/${tripId}/checklists/${id}`);
   }
 
   getSharedTripChecklist(tripId: number): Observable<ChecklistItem[]> {
-    return this.http.get<ChecklistItem[]>(`https://localhost:7251/api/shared-trips/${tripId}/checklist`);
+    return this.http.get<ChecklistItem[]>(`${this.baseUrl}/shared-trips/${tripId}/checklists`);
   }
 
 
@@ -257,23 +257,23 @@ export class TripService {
   // src/app/trip/trip.service.ts
 
   getExpenses(tripId: number) {
-    return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/expenses`);
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/expenses`);
   }
 
   addExpense(tripId: number, expense: any) {
-    return this.http.post(`https://localhost:7251/api/trips/${tripId}/expenses`, expense);
+    return this.http.post(`${this.baseUrl}/trips/${tripId}/expenses`, expense);
   }
 
   deleteExpense(tripId: number, id: number) {
-    return this.http.delete(`https://localhost:7251/api/trips/${tripId}/expenses/${id}`);
+    return this.http.delete(`${this.baseUrl}/trips/${tripId}/expenses/${id}`);
   }
 
   updateExpense(tripId: number, expenseId: number, expense: any): Observable<any> {
-    return this.http.put(`https://localhost:7251/api/trips/${tripId}/expenses/${expenseId}`, expense);
+    return this.http.put(`${this.baseUrl}/trips/${tripId}/expenses/${expenseId}`, expense);
   }
 
   getSharedExpenses(tripId: number) {
-    return this.http.get<any>(`https://localhost:7251/api/trips/${tripId}/shared-expenses`);
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/shared-expenses`);
   }
 
 
@@ -284,11 +284,11 @@ export class TripService {
     sharedWithEmail: string;
     accessLevel: 'view' | 'edit';
   }) {
-    return this.http.post(`https://localhost:7251/api/TripShare/share`, data);
+    return this.http.post(`${this.baseUrl}/TripShare/share`, data);
   }
 
   getSharedTrips() {
-    return this.http.get<Trip[]>(`https://localhost:7251/api/TripShare/shared-with-me`);
+    return this.http.get<Trip[]>(`${this.baseUrl}/TripShare/shared-with-me`);
   }
 
 

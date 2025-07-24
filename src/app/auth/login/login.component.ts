@@ -17,34 +17,18 @@ export class LoginComponent {
   emailError: string | null = null;
   passwordError: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
-    localStorage.removeItem('jwtToken');
-    localStorage.removeItem('user');
-
-    // Clear previous error messages
     this.emailError = null;
     this.passwordError = null;
 
     this.authService.login(this.email, this.password).subscribe({
-      next: (res: { token: string }) => {
+      next: (res) => {
         console.log('Login successful', res);
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('jwtToken', res.token);
+        this.authService.setUser(res.user, res.accessToken, res.refreshToken);
 
-        // Decode token
-        const payload = JSON.parse(atob(res.token.split('.')[1]));
-        const user = {
-          username: payload.unique_name || payload.username,
-          email: payload.email,
-          id: parseInt(payload.nameid, 10) || parseInt(payload.id, 10),
-          role: payload.role || payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
-        };
-        localStorage.setItem('user', JSON.stringify(user));
-
-        // Navigate based on role
-        if (user.role === 'Admin') {
+        if (res.user.role === 'Admin') {
           this.router.navigate(['/admin']);
         } else {
           this.router.navigate(['/dashboard']);
@@ -52,9 +36,7 @@ export class LoginComponent {
       },
       error: (err) => {
         console.error('Login failed', err);
-
-        const message =
-          err?.error?.error || err?.error?.message || 'Invalid credentials';
+        const message = err?.error?.error || err?.error?.message || 'Invalid credentials';
 
         if (message.toLowerCase().includes('email')) {
           this.emailError = message;
@@ -64,7 +46,7 @@ export class LoginComponent {
           this.emailError = 'Invalid email or password';
           this.passwordError = 'Invalid email or password';
         }
-      },
+      }
     });
   }
 }

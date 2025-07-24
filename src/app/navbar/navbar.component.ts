@@ -15,17 +15,16 @@ export class NavbarComponent implements OnInit {
   isLoggedIn: boolean = false;
   user: any = null;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.user = this.authService.getCurrentUser();
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      const user = JSON.parse(userData);
-      this.username = user.username;
-      this.isLoggedIn = true;
-    }
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+      this.isLoggedIn = !!user;
+      this.username = user?.username || '';
+    });
   }
+
 
   logout(): void {
     localStorage.removeItem('user');
@@ -54,7 +53,7 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
-  goToAdmin(): void{
+  goToAdmin(): void {
     this.router.navigate(['/admin']);
   }
 }
