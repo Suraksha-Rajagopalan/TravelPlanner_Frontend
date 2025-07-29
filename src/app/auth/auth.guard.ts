@@ -1,10 +1,15 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 export const authGuard: CanActivateFn = () => {
-  const token = localStorage.getItem('token');
+  const cookieService = inject(CookieService);
   const router = inject(Router);
-  if (token) return true;
+  const token = cookieService.get('jwtToken');
+
+  if (token) {
+    return true;
+  }
 
   router.navigate(['/login']);
   return false;

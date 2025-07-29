@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
@@ -27,9 +27,7 @@ export class NavbarComponent implements OnInit {
 
 
   logout(): void {
-    localStorage.removeItem('user');
-    localStorage.removeItem('userProfileDetails');
-    this.isLoggedIn = false;
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 

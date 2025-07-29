@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, resource } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Trip } from '../models/trip';
@@ -7,6 +7,7 @@ import { map, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ItineraryItemCreate, ItineraryItem } from '../models/itinerary';
 import { ChecklistItem } from '../models/checklist';
+import { AuthService } from '../auth/auth.service';
 
 
 @Injectable({
@@ -129,33 +130,52 @@ export class TripService {
   ];
   private myTrips: Trip[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   // Backend API Methods
   getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(`${this.baseUrl}/Trip`);
+    return this.http.get<any>(`${this.baseUrl}/Trip`).pipe(
+      map(response => response.result)
+    );
   }
+
 
   getTripByIdFromBackend(id: number): Observable<Trip> {
-    return this.http.get<Trip>(`${this.baseUrl}/Trip/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/Trip/${id}`).pipe(
+      map(response => response.result) // unwrap AutoWrapper
+    );
   }
 
-  addTrip(trip: Trip) {
-    return this.http.post<Trip>(`${this.baseUrl}/Trip`, trip);
-  }
 
+  addTrip(trip: Trip): Observable<Trip> {
+    return this.http.post<any>(`${this.baseUrl}/Trip`, trip).pipe(
+      map(response => response.result)
+    );
+  }
 
   updateTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.baseUrl}/Trip/${trip.id}`, trip);
+    return this.http.put<{ result: Trip }>(`${this.baseUrl}/Trip/${trip.id}`, trip).pipe(
+      map(response => response.result)
+    );
   }
-
 
   deleteTrip(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/Trip/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/Trip/${id}`).pipe(
+      map(response => {
+        if (response.isSuccess) {
+          return; // return void
+        } else {
+          throw new Error('Failed to delete trip');
+        }
+      })
+    );
   }
 
-  updateSharedTrip(trip: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.baseUrl}/Trip/shared/${trip.id}`, trip);
+
+  updateSharedTrip(trip: Trip): Observable<Trip[]> {
+    return this.http.put<any>(`${this.baseUrl}/Trip/shared/${trip.id}`, trip).pipe(
+      map(response => response.result)
+    );
   }
 
 
@@ -183,113 +203,154 @@ export class TripService {
   // Functions for Reviews-
 
   getReview(tripId: number): Observable<Review | null> {
-    return this.http.get<Review[]>(`${this.baseUrl}/Trip/${tripId}/reviews`).pipe(
-      map(reviews => reviews.length > 0 ? reviews[0] : null),
+    return this.http.get<any>(`${this.baseUrl}/Reviews/${tripId}`).pipe(
+      map(response => {
+        const reviews: Review[] = response.result;
+        return reviews.length > 0 ? reviews[0] : null;
+      }),
       catchError(() => of(null))
     );
   }
 
+
   // Ratings-
-  submitRatingAndReview(tripId: number, rating: number, review: string) {
-    return this.http.post(`${this.baseUrl}/Trip/${tripId}/review`, { rating, review });
+  submitRatingAndReview(tripId: number, rating: number, review: string): Observable<any> {
+    const userId = this.authService.getUserId();
+
+    if (!userId) {
+      console.error('User ID is missing.');
+      return of(null); // fallback in case user not found
+    }
+
+    const payload = { tripId, userId, rating, review };
+
+    return this.http.post<any>(`${this.baseUrl}/Reviews`, payload).pipe(
+      map(response => response.result),
+      catchError(error => {
+        console.error('Failed to submit review:', error);
+        return of(null);
+      })
+    );
   }
 
 
-  // For all reviwes and Ratings
+
   searchTripReviews(destination: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/TripReviews/search`, {
+    return this.http.get<any>(`${this.baseUrl}/TripReviews/search`, {
       params: { destination }
-    });
+    }).pipe(
+      map(response => response.result)
+    );
   }
 
-  //Itinerarys-
+  // Itinerary
   getItinerary(tripId: number): Observable<ItineraryItem[]> {
-    return this.http.get<ItineraryItem[]>(`${this.baseUrl}/trips/${tripId}/itinerary`);
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/itinerary`).pipe(
+      map(response => response.result)
+    );
   }
 
   addItineraryItem(tripId: number, item: ItineraryItemCreate): Observable<ItineraryItem> {
-    console.log('Sending:', item);  // what is sent to the backend
-    return this.http.post<ItineraryItem>(
-      `${this.baseUrl}/trips/${tripId}/itinerary`,
-      item
+    return this.http.post<any>(`${this.baseUrl}/trips/${tripId}/itinerary`, item).pipe(
+      map(response => response.result)
     );
   }
 
   getSharedItinerary(tripId: number): Observable<ItineraryItem[]> {
-    return this.http.get<ItineraryItem[]>(`${this.baseUrl}/shared/trips/${tripId}/itinerary`);
+    return this.http.get<any>(`${this.baseUrl}/shared/trips/${tripId}/itinerary`).pipe(
+      map(response => response.result)
+    );
   }
 
-
-
   updateItineraryItem(tripId: number, item: ItineraryItem): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/trips/${tripId}/itinerary/${item.id}`, item);
+    return this.http.put<any>(`${this.baseUrl}/trips/${tripId}/itinerary/${item.id}`, item).pipe(
+      map(() => void 0)
+    );
   }
 
   deleteItineraryItem(tripId: number, id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/trips/${tripId}/itinerary/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/trips/${tripId}/itinerary/${id}`).pipe(
+      map(() => void 0)
+    );
   }
 
-  // src/app/trip/trip.service.ts
-  getChecklist(tripId: number) {
-    return this.http.get<ChecklistItem[]>(`${this.baseUrl}/trips/${tripId}/checklists`);
+  // Checklist
+  getChecklist(tripId: number): Observable<ChecklistItem[]> {
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/checklists`).pipe(
+      map(response => response.result)
+    );
   }
 
-  addChecklistItem(item: ChecklistItem) {
-    return this.http.post<ChecklistItem>(`${this.baseUrl}/trips/${item.tripId}/checklists`, item);
+  addChecklistItem(item: ChecklistItem): Observable<ChecklistItem> {
+    return this.http.post<any>(`${this.baseUrl}/trips/${item.tripId}/checklists`, item).pipe(
+      map(response => response.result)
+    );
   }
 
-  updateChecklistItem(item: ChecklistItem) {
-    return this.http.put(`${this.baseUrl}/trips/${item.tripId}/checklists/${item.id}`, item);
+  updateChecklistItem(item: ChecklistItem): Observable<void> {
+    return this.http.put<any>(`${this.baseUrl}/trips/${item.tripId}/checklists/${item.id}`, item).pipe(
+      map(() => void 0)
+    );
   }
 
-  deleteChecklistItem(tripId: number, id: number) {
-    return this.http.delete(`${this.baseUrl}/trips/${tripId}/checklists/${id}`);
+  deleteChecklistItem(tripId: number, id: number): Observable<void> {
+    return this.http.delete<any>(`${this.baseUrl}/trips/${tripId}/checklists/${id}`).pipe(
+      map(() => void 0)
+    );
   }
 
   getSharedTripChecklist(tripId: number): Observable<ChecklistItem[]> {
-    return this.http.get<ChecklistItem[]>(`${this.baseUrl}/shared-trips/${tripId}/checklists`);
+    return this.http.get<any>(`${this.baseUrl}/shared-trips/${tripId}/checklists`).pipe(
+      map(response => response.result)
+    );
   }
-
-
 
   // Budget Tracking
-
-  // src/app/trip/trip.service.ts
-
-  getExpenses(tripId: number) {
-    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/expenses`);
+  getExpenses(tripId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/expenses`).pipe(
+      map(response => response.result)
+    );
   }
 
-  addExpense(tripId: number, expense: any) {
-    return this.http.post(`${this.baseUrl}/trips/${tripId}/expenses`, expense);
+
+  addExpense(tripId: number, expense: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/trips/${tripId}/expenses`, expense).pipe(
+      map(response => response.result)
+    );
   }
 
-  deleteExpense(tripId: number, id: number) {
-    return this.http.delete(`${this.baseUrl}/trips/${tripId}/expenses/${id}`);
+  deleteExpense(tripId: number, id: number): Observable<void> {
+    return this.http.delete<any>(`${this.baseUrl}/trips/${tripId}/expenses/${id}`).pipe(
+      map(() => void 0)
+    );
   }
 
   updateExpense(tripId: number, expenseId: number, expense: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/trips/${tripId}/expenses/${expenseId}`, expense);
+    return this.http.put<any>(`${this.baseUrl}/trips/${tripId}/expenses/${expenseId}`, expense).pipe(
+      map(response => response.result)
+    );
   }
 
-  getSharedExpenses(tripId: number) {
-    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/shared-expenses`);
+  getSharedExpenses(tripId: number): Observable<any[]> {
+    return this.http.get<any>(`${this.baseUrl}/trips/${tripId}/shared-expenses`).pipe(
+      map(response => response.result)
+    );
   }
 
-
-  // Shared trips
-
+  // Shared Trips
   shareTrip(data: {
     tripId: number;
     sharedWithEmail: string;
     accessLevel: 'view' | 'edit';
-  }) {
-    return this.http.post(`${this.baseUrl}/TripShare/share`, data);
+  }): Observable<string> {
+    return this.http.post<any>(`${this.baseUrl}/TripShare/share`, data).pipe(
+      map(response => response.message)
+    );
   }
 
-  getSharedTrips() {
-    return this.http.get<Trip[]>(`${this.baseUrl}/TripShare/shared-with-me`);
+  getSharedTrips(): Observable<Trip[]> {
+    return this.http.get<any>(`${this.baseUrl}/TripShare/shared-with-me`).pipe(
+      map(response => response.result)
+    );
   }
-
-
 }
