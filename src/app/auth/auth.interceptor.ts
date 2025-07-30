@@ -6,10 +6,11 @@ import { throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.getJwtToken();
+  const token = authService.getJwtToken(); // Get current JWT token
 
   let authReq = req;
 
+  // If token exists, add it to the Authorization header
   if (token) {
     authReq = req.clone({
       setHeaders: {
@@ -25,7 +26,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError(error => {
-      if (error.status === 401 && !req.url.includes('/Token/refresh')) { // 🔐 prevent recursion
+      // If 401 Unauthorized and not the refresh endpoint, try refreshing the token
+      if (error.status === 401 && !req.url.includes('/refresh')) {
         return authService.refreshToken().pipe(
           switchMap(() => {
             const refreshedToken = authService.getJwtToken();
@@ -44,6 +46,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         );
       }
 
+      // If not a 401 or refresh fails
       return throwError(() => error);
     })
   );

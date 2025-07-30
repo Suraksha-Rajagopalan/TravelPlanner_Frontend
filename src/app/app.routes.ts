@@ -39,5 +39,5 @@ export const routes: Routes = [
   { path: 'trip-share/:tripId', component: TripShareComponent },
   { path: 'trip-form', component: TripFormComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

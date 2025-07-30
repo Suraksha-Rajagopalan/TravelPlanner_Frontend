@@ -43,12 +43,13 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    const refreshToken = this.cookieService.get('refreshToken');
+    const RefreshToken = this.cookieService.get('refreshToken');
+    console.log('Refresh Token:', RefreshToken);
+    const AccessToken = this.cookieService.get('jwtToken');
+    const body = { AccessToken, RefreshToken };
 
     return this.http.post<any>(
-      'http://localhost:5276/api/Token/refresh',
-      { refreshToken },
-      { withCredentials: true }
+      `${this.apiUrl}/refresh`, body
     ).pipe(
       map(response => response.result),
       catchError(error => {
@@ -56,6 +57,10 @@ export class AuthService {
         return throwError(() => new Error('Session expired. Please log in again.'));
       })
     );
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('jwtToken'); 
   }
 
 
@@ -88,7 +93,9 @@ export class AuthService {
   }
 
   getJwtToken(): string {
-    return this.cookieService.get('jwtToken');
+    const JWT = this.cookieService.get('jwtToken');
+    console.log('jwt:', JWT);
+    return JWT;
   }
 
   private getUserFromCookies(): any {
